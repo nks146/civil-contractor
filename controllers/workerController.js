@@ -112,7 +112,7 @@ exports.assignProjectToWorkerController = async (req, res) => {
   }
 };
 
-// Delete assigned project from worker and update status to Active
+// Delete assigned project from worker and update worker status from engaged to Active
 exports.deleteAssignedProjectFromWorkerController = async (req, res) => {
   const { worker_id, assignment_id } = req.params;
   if (!worker_id || !assignment_id) {
