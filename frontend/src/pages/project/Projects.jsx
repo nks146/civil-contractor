@@ -93,7 +93,7 @@ export default function Projects() {
                 </button>
 
                 <button
-                  onClick={() => navigate(`/projects/edit/${p.id}`)}
+                  onClick={() => navigate(`/projects/${p.id}/edit`)}
                   className="text-green-600 hover:underline"
                 >
                   Edit
