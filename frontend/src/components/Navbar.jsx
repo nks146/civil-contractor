@@ -1,21 +1,9 @@
-/*export default function Navbar() {
-  return (
-    <div className="bg-white p-4 shadow flex justify-between items-center">
-      <h3 className="text-lg font-semibold">Dashboard</h3>
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-gray-600">Hello, Niraj</span>
-        <div className="w-8 h-8 bg-blue-500 rounded-full" />
-      </div>
-    </div>
-  );
-}
-*/
-
-import { useState } from 'react';
-//const userData = localStorage.getItem("user");
-  //console.log(userData);
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
   
   let user = null;
   const userData = localStorage.getItem("user");
@@ -23,19 +11,35 @@ export default function Navbar() {
       user = JSON.parse(userData);
     }
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen(prev => !prev);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user"); 
-    window.location.href = "/login";
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
   };
+
+  // 👇 Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="bg-white p-4 shadow flex justify-between items-center">
-      <h3 className="text-lg font-semibold">Dashboard</h3>
-      <div className="flex items-center gap-3 relative">
+      <h3 className="text-lg font-semibold"></h3>
+      <div className="flex items-center gap-3 relative" ref={dropdownRef}>
         <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
         <button
           onClick={toggleDropdown}
@@ -50,7 +54,7 @@ export default function Navbar() {
               Profile
             </a>
             <button
-              onClick={handleLogout}
+              onClick={logout}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Logout
