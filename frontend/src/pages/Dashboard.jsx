@@ -1,19 +1,17 @@
-import Sidebar from "./includes/Sidebar";
-import Navbar from "./includes/Navbar";
-import StatCard from "./includes/StatCard";
-import ProjectTable from "./ProjectTable";
-import WorkerList from "./WorkerList";
+//import Sidebar from "../components/Sidebar";
+//import Navbar from "../components/Navbar";
+import StatCard from "../components/StatCard";
+import ProjectTable from "../components/ProjectTable";
+import WorkerList from "../components/WorkerList";
 
 export default function Dashboard() {
   return (
     <div className="flex bg-slate-100 min-h-screen">
-      <Sidebar />
 
       <div className="flex-1">
-        <Navbar />
 
         <div className="p-6 space-y-6">
-
+          <h2 className="text-2xl font-semibold">Dashboard</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             <StatCard title="Total Projects" value="8" />
             <StatCard title="Running Projects" value="3" />
