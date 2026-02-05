@@ -1,15 +1,10 @@
-/*import Dashboard from "./pages/Dashboard";
-
-function App() {
-  return <Dashboard />;
-}
-
-export default App;*/
-
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Dashboard from "./components/Dashboard";
+import MainLayout from "./layout/MainLayout";
+import Projects from "./pages/project/Projects";
+import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AddProject from "./pages/project/AddProject";
 
 export default function App() {
   return (
@@ -17,13 +12,16 @@ export default function App() {
       <Route path="/login" element={<Login />} />
 
       <Route
-        path="/"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <MainLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/add" element={<AddProject />} />
+      </Route>
     </Routes>
   );
 }
