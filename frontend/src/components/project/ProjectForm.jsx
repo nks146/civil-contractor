@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProjects } from "../../services/projectService";
+import { getRootProjects } from "../../services/projectService";
 import { validateAddProject } from "../../utils/validation";
 
 export default function ProjectForm({ onSubmit, initialData = {} }) {
@@ -18,7 +18,7 @@ export default function ProjectForm({ onSubmit, initialData = {} }) {
   });
 
   useEffect(() => {
-    getProjects().then(setProjects);
+    getRootProjects().then(setProjects);
   }, []);
 
   const handleChange = (e) => {
@@ -67,7 +67,10 @@ export default function ProjectForm({ onSubmit, initialData = {} }) {
           name="parent_project"
           value={form.parent_project}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          disabled={initialData?.parent_project === 0}
+          className={`w-full border px-3 py-2 rounded ${
+            initialData?.parent_project === 0 ? "opacity-50 cursor-not-allowed bg-gray-100" : ""
+          }`}
         >
           <option value={0}>No Parent (Main Project)</option>
           {projects.map((p) => (
