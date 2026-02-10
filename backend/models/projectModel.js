@@ -1,8 +1,14 @@
 const pool = require('../config/db');
 
 // Get all projects
-exports.getAllProjects = async (userId) => {
-  const [rows] = await pool.query('SELECT * FROM projects WHERE user_id = ? ORDER BY created_on DESC', [userId]);
+exports.getAllProjects = async (userId) => {  
+  const [rows] = await pool.query('SELECT p1.*,p2.project_name as root_project FROM `projects` p1 left join projects p2 on p1.parent_project = p2.id where p1.user_id=? order by p1.created_on desc', [userId]);
+  return rows;
+};
+
+// Get all root projects (projects with parent_project = 0)
+exports.getRootProjects = async (userId) => {
+  const [rows] = await pool.query('SELECT * FROM projects WHERE user_id = ? AND parent_project = 0 ORDER BY created_on DESC', [userId]);
   return rows;
 };
 
@@ -30,8 +36,8 @@ exports.createProject = async (project) => {
 };
 
 // Get project by ID
-exports.getProjectById = async (id) => {
-  const [rows] = await pool.query('SELECT * FROM projects WHERE id = ?', [id]);
+exports.getProjectById = async (id, userId) => {
+  const [rows] = await pool.query('SELECT * FROM projects WHERE id = ? AND user_id = ?', [id, userId]);
   return rows[0];
 };
 
@@ -125,13 +131,35 @@ exports.updatePostContent = async (postId, post_comment, updated_on) => {
 
 // Get all workers list by project
 exports.getAssignedWorkersByProject = async (project_id) => {
-  const sql = `
+  /*const sql = `
     SELECT w.*, wp.rate_per_day, wp.work_start_date, wp.assigned_on
     FROM workers w
     INNER JOIN worker_projects wp ON w.id = wp.worker_id
     WHERE wp.project_id = ?
     ORDER BY w.worker_name
-  `;
+  `;*/
+
+  const sql = `SELECT 
+    w.*,
+    wp.rate_per_day,
+    wp.work_start_date,
+    wp.assigned_on,
+    IFNULL(SUM(wa.full_day + (wa.half_day * 0.5)), 0) AS total_working_days,
+    ROUND(IFNULL(SUM(wa.full_day + (wa.half_day * 0.5)), 0) * wp.rate_per_day, 2) AS total_wage
+FROM 
+    workers w
+JOIN 
+    worker_projects wp ON wp.worker_id = w.id
+LEFT JOIN 
+    worker_attendance wa ON wa.worker_id = w.id AND wa.project_id = wp.project_id
+WHERE 
+    wp.project_id = ?
+GROUP BY 
+    w.id, w.user_id, w.worker_name, w.address, w.contact, w.status, w.base_rate, 
+    w.expertise, w.created_on, w.updated_on, wp.rate_per_day, wp.work_start_date, wp.assigned_on
+ORDER BY 
+    w.worker_name;`;
+    
   const [rows] = await pool.query(sql, [project_id]);
   return rows;
 };

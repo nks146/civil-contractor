@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getAllProjects, createProject, updateProject, 
+const { getAllProjects, getRootProjects, createProject, updateProject, 
         getProjectById, createPost, savePostImages, 
         deleteMultipleImages, deleteImage, getImageById,
         getImageByIds, updatePostContent, getAssignedWorkersByProject,
@@ -18,6 +18,21 @@ exports.allProject = async (req, res) => {
     }
   try {
     const projects = await getAllProjects(userId);
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching projects', error: err.message });
+  }
+};
+
+// Get all root projects
+exports.rootProjects = async (req, res) => { 
+  const userId = req.user.id;
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  try {
+    const projects = await getRootProjects(userId);
     res.status(200).json(projects);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching projects', error: err.message });
@@ -136,6 +151,7 @@ exports.addMorePostImages = (req, res) => {
 // Edit project details
 exports.editProject = async (req, res) => {
   const projectId = req.params.id;
+  const userId = req.user.id;
   const { project_name, parent_project, location, start_date, end_date, status, hold_reason } = req.body;
   if (!project_name || !location || !start_date) {
     return res.status(400).json({ message: 'Project Name, Location, and Start Date are required' });
@@ -153,7 +169,7 @@ exports.editProject = async (req, res) => {
       updated_on
     };
     await updateProject(projectId, updatedProject);
-    const project = await getProjectById(projectId);
+    const project = await getProjectById(projectId, userId);
     res.status(200).json({ message: 'Project updated successfully', project });
   } catch (err) {
     res.status(500).json({ message: 'Error updating project', error: err.message });
@@ -163,14 +179,12 @@ exports.editProject = async (req, res) => {
 // particular project by id
 exports.getProjectDetails = async (req, res) => {
   const projectId = req.params.id;
+  const userId = req.user.id;
   try {
-    const project = await getProjectById(projectId);
+    const project = await getProjectById(projectId, userId);
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
-    // Format dates to 'DD-MM-YYYY'
-    project.start_date = toDDMMYYYY(project.start_date);
-    project.end_date = toDDMMYYYY(project.end_date);
     res.status(200).json(project);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching project details', error: err.message });
