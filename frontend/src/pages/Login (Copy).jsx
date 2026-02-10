@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
@@ -8,24 +6,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post("/api/auth/login", { email, password });
-      // Redux
-      dispatch(
-        loginSuccess({
-          user: res.data.user || res.data.userData,
-          token: res.data.token,
-        })
-      );
-
-      // Persistence
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user || res.data.userData));
+      localStorage.setItem("user", JSON.stringify(res.data.userData));
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");

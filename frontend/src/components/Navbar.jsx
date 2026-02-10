@@ -1,20 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
+
+
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log("User in Navbar:", user); // Debugging line
   
-  let user = null;
-  const userData = localStorage.getItem("user");
+  //let user = null;
+  /*const userData = localStorage.getItem("user");
     if (userData) {
       user = JSON.parse(userData);
-    }
+    }*/
   const toggleDropdown = () => {
     setIsDropdownOpen(prev => !prev);
   };
 
-  const logout = () => {
+  const handleLogout = () => {
+    dispatch(logout());
     localStorage.clear();
     navigate("/login");
   };
@@ -54,7 +62,7 @@ export default function Navbar() {
               Profile
             </a>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Logout

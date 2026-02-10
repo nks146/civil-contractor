@@ -59,7 +59,7 @@ export default function Projects() {
             {/* DETAILS */}
             <div className="flex-1">
               <h3 className="text-lg font-semibold mb-1">
-                {p.project_name}
+                {p.project_name + (p.root_project ? ` (${p.root_project})` : "")}
               </h3>
 
               <p className="text-sm text-gray-600">📍 {p.location}</p>
