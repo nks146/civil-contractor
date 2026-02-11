@@ -1,8 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getAllProjects, getRootProjects, createProject, updateProject, 
-        getProjectById, createPost, savePostImages, 
+const { getAllProjects, getRootProjects, createProject, updateProject,     softDeleteProject, getProjectById, createPost, savePostImages, 
         deleteMultipleImages, deleteImage, getImageById,
         getImageByIds, updatePostContent, getAssignedWorkersByProject,
         addWorkerAttendance } = require('../models/projectModel');
@@ -282,5 +281,17 @@ exports.addWorkerAttendanceController = async (req, res) => {
     res.status(500).json({ message: 'Error submitting attendance', error: err.message });
   }
 };
+
+//Delete a project - (Soft delete by setting status to 'Deleted')
+exports.deleteProject = async (req, res) => {
+  const projectId = req.params.id;
+  const userId = req.user.id;
+  try {
+    await softDeleteProject(projectId, { status: 'Deleted', updated_on: new Date() });
+    res.status(200).json({ message: 'Project deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting project', error: err.message });
+  }
+}
 
 

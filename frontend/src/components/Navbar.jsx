@@ -10,7 +10,6 @@ export default function Navbar() {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log("User in Navbar:", user); // Debugging line
   
   //let user = null;
   /*const userData = localStorage.getItem("user");

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/axios";
+import { getProjects, deleteProject } from "../../services/projectService";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -13,8 +13,8 @@ export default function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const res = await api.get("/api/project");
-      setProjects(res.data); // API returns array
+      const AllProjects = await getProjects();
+      setProjects(AllProjects); // API returns array
     } catch (err) {
       console.error(err);
     } finally {
@@ -22,12 +22,13 @@ export default function Projects() {
     }
   };
 
-  const deleteProject = async (id) => {
+  const projectDelete = async (id) => {
     if (!window.confirm("Delete this project?")) return;
 
     try {
-      await api.delete(`/api/project/${id}`);
-      setProjects(projects.filter((p) => p.id !== id));
+      await deleteProject(id);
+      //setProjects(projects.filter((p) => p.id !== id));
+      fetchProjects(); // Refresh list after deletion
     } catch (err) {
       alert("Delete failed");
     }
@@ -76,6 +77,10 @@ export default function Projects() {
                   className={`text-xs px-2 py-1 rounded ${
                     p.status === "Pending"
                       ? "bg-yellow-100 text-yellow-700"
+                      : p.status === "Deleted"
+                      ? "bg-red-100 text-red-700"
+                      : p.status === "Hold"
+                      ? "bg-orange-100 text-orange-700"
                       : "bg-green-100 text-green-700"
                   }`}
                 >
@@ -100,7 +105,7 @@ export default function Projects() {
                 </button>
 
                 <button
-                  onClick={() => deleteProject(p.id)}
+                  onClick={() => projectDelete(p.id)}
                   className="text-red-600 hover:underline"
                 >
                   Delete

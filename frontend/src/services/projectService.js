@@ -24,5 +24,5 @@ export const updateProject = async (id, payload) => {
 };
 
 export const deleteProject = async (id) => {
-  return api.delete(`/api/project/${id}`);
+  return api.delete(`/api/project/${id}/delete`);
 };

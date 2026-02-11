@@ -79,6 +79,23 @@ exports.updateProject = async (id, project) => {
   return result;
 };
 
+// Soft delete project
+exports.softDeleteProject = async (id, project) => {
+  const sql = `
+    UPDATE projects SET      
+      status = ?,
+      updated_on = ?
+    WHERE id = ?
+  `;
+  const values = [    
+    project.status,
+    project.updated_on,
+    id
+  ];
+  const [result] = await pool.query(sql, values);
+  return result;
+};
+
 exports.createPost = async (post) => {  
   const sql = `
     INSERT INTO post_on_project (project_id, post_comment, created_on, updated_on)

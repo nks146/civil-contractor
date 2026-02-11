@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
-const { addProject,allProject,getProjectDetails,rootProjects,postOnProject,addMorePostImages,
+const { addProject,allProject,getProjectDetails,deleteProject,rootProjects,postOnProject,addMorePostImages,
         deleteImages, editProject, editPostContent, 
         getAssignedWorkersByProjectController, addWorkerAttendanceController } = require('../controllers/projectController');
 
@@ -12,6 +12,7 @@ router.get('/root-projects', rootProjects);
 router.post('/add', addProject);
 router.get('/:id', getProjectDetails);
 router.put('/:id/edit', editProject);
+router.delete('/:id/delete', deleteProject);
 router.post('/:id/post', postOnProject);
 //router.post('/:id/post/add-images', addMorePostImages);
 //router.delete('/image/:imageId', deleteSingleImage);
