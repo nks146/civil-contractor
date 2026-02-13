@@ -12,13 +12,14 @@ export default function Sidebar() {
     isActive ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
           Dashboard
         </NavLink>
-
         <NavLink to="/projects" className={({ isActive }) =>`block px-4 py-2 rounded ${isActive ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
           Projects
         </NavLink>
-
         <NavLink to="/workers" className={({ isActive }) =>`block px-4 py-2 rounded ${isActive ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
           Workers
+        </NavLink>
+        <NavLink to="/orders" className={({ isActive }) =>`block px-4 py-2 rounded ${isActive ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
+          Orders
         </NavLink>
       </nav>
     </div>
