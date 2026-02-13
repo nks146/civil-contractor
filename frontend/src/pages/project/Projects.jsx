@@ -50,7 +50,7 @@ export default function Projects() {
         {projects.map((p) => (
           <div
             key={p.id}
-            className="bg-white rounded-xl shadow p-4 flex gap-4"
+            className="bg-gray-700 text-gray-300 rounded-xl shadow p-4 flex gap-4"
           >
             {/* IMAGE */}
             <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-sm text-gray-500">
@@ -63,9 +63,9 @@ export default function Projects() {
                 {p.project_name + (p.root_project ? ` (${p.root_project})` : "")}
               </h3>
 
-              <p className="text-sm text-gray-600">📍 {p.location}</p>
+              <p className="text-sm text-gray-300">📍 {p.location}</p>
 
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-300">
                 Start:{" "}
                 {p.start_date
                   ? new Date(p.start_date).toLocaleDateString()
@@ -76,7 +76,7 @@ export default function Projects() {
                 <span
                   className={`text-xs px-2 py-1 rounded ${
                     p.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-700"
+                      ? "bg-yellow-100 text-yellow-900"
                       : p.status === "Deleted"
                       ? "bg-red-100 text-red-700"
                       : p.status === "Hold"

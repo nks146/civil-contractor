@@ -44,10 +44,10 @@ export default function Navbar() {
   }, []);
 
   return (
-    <div className="bg-white p-4 shadow flex justify-between items-center">
+    <div className="bg-gray-800 text-gray-200 px-6 py-4 border-b border-gray-700 flex justify-between items-center">
       <h3 className="text-lg font-semibold"></h3>
       <div className="flex items-center gap-3 relative" ref={dropdownRef}>
-        <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
+        <span className="text-sm text-gray-300">Welcome, {user?.name}</span>
         <button
           onClick={toggleDropdown}
           className="w-8 h-8 bg-blue-500 rounded-full focus:outline-none"

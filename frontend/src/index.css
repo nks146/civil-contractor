@@ -5,3 +5,8 @@
 .input {
   @apply w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
+
+/* optional global dark styles */
+body {
+  @apply bg-gray-900 text-gray-200;
+}
