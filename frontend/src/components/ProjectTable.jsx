@@ -5,12 +5,12 @@ const projects = [
 
 export default function ProjectTable() {
   return (
-    <div className="bg-white rounded-xl shadow p-5">
-      <h3 className="font-semibold mb-4">Recent Projects</h3>
+    <div className="bg-gray-800 rounded-xl shadow p-5">
+      <h3 className="font-semibold mb-4 text-white">Recent Projects</h3>
 
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-gray-500">
+          <tr className="text-left text-gray-400">
             <th>Project</th>
             <th>Status</th>
             <th>Budget</th>
@@ -18,8 +18,8 @@ export default function ProjectTable() {
         </thead>
         <tbody>
           {projects.map(p => (
-            <tr key={p.id} className="border-t">
-              <td className="py-3">{p.name}</td>
+            <tr key={p.id} className="border-t border-gray-700">
+              <td className="py-3 text-white">{p.name}</td>
               <td>
                 <span
                   className={`px-2 py-1 rounded text-white text-xs ${
@@ -29,7 +29,7 @@ export default function ProjectTable() {
                   {p.status}
                 </span>
               </td>
-              <td>{p.budget}</td>
+              <td className="text-gray-300">{p.budget}</td>
             </tr>
           ))}
         </tbody>

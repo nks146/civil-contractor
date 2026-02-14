@@ -40,11 +40,11 @@ export default function EditProject() {
 
   };
 
-  if (loading) return <p>Loading project...</p>;
+  if (loading) return <p className="text-white">Loading project...</p>;
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-6">Edit Project</h2>
+    <div className="max-w-3xl mx-auto bg-gray-800 p-6 rounded shadow min-h-screen mt-6">
+      <h2 className="text-2xl font-bold mb-6 text-white">Edit Project</h2>
 
       <ProjectForm
         initialData={initialData}

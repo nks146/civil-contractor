@@ -11,8 +11,8 @@ export default function AddProject() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-6">Add New Project</h2>
+    <div className="max-w-3xl mx-auto bg-gray-800 p-6 rounded shadow min-h-screen mt-6">
+      <h2 className="text-2xl font-bold mb-6 text-white">Add New Project</h2>
       <ProjectForm onSubmit={handleCreate} />
     </div>
   );
