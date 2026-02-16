@@ -19,7 +19,7 @@ router.post('/add', createOrderController);                           // Create
 router.get('/', getAllOrdersController);                             // Read all
 router.get('/id/:id', getOrderByIdController);                       // Read by ID
 router.get('/project/:project_id', getOrdersByProjectIdController);  // Read by project ID
-router.get('/material/:material_type', getOrdersByMaterialTypeController); // Read by material type
+router.get('/project/:project_id/material/:material_type', getOrdersByMaterialTypeController); // Read by material type
 router.put('/id/:id', updateOrderController);                        // Update
 router.delete('/id/:id', deleteOrderController);                     // Delete
 router.patch('/id/:id/stock', updateRemainingStockController);       // Update stock
