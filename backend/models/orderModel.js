@@ -5,7 +5,7 @@ exports.createOrder = async (orderData) => {
   const sql = `
     INSERT INTO material_orders 
     (user_id, material_type, supplier_name, supplier_contact, address, quantity, 
-     unite_type, unit_price, delivery_date, project_id, comment, remaining_stock, 
+     unit_type, unit_price, delivery_date, project_id, comment, remaining_stock, 
      transportation_cost, invoice, used_in_projects) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
@@ -16,7 +16,7 @@ exports.createOrder = async (orderData) => {
     orderData.supplier_contact,
     orderData.address,
     orderData.quantity,
-    orderData.unite_type,
+    orderData.unit_type,
     orderData.unit_price,
     orderData.delivery_date,
     orderData.project_id,
@@ -59,7 +59,7 @@ exports.updateOrder = async (id, orderData) => {
   const sql = `
     UPDATE material_orders 
     SET material_type = ?, supplier_name = ?, supplier_contact = ?, 
-        address = ?, quantity = ?, unite_type = ?, unit_price = ?, 
+        address = ?, quantity = ?, unit_type = ?, unit_price = ?, 
         delivery_date = ?, project_id = ?, comment = ?, remaining_stock = ?, 
         transportation_cost = ?, invoice = ?, used_in_projects = ?
     WHERE id = ?
@@ -70,7 +70,7 @@ exports.updateOrder = async (id, orderData) => {
     orderData.supplier_contact,
     orderData.address,
     orderData.quantity,
-    orderData.unite_type,
+    orderData.unit_type,
     orderData.unit_price,
     orderData.delivery_date,
     orderData.project_id,
@@ -91,9 +91,9 @@ exports.deleteOrder = async (id) => {
   return result;
 };
 
-// Get orders by material type
-exports.getOrdersByMaterialType = async (material_type) => {
-  const [rows] = await pool.query('SELECT * FROM material_orders WHERE material_type = ? ORDER BY id DESC', [material_type]);
+// Get orders by project id and material type
+exports.getOrdersByMaterialType = async (project_id, material_type) => {
+  const [rows] = await pool.query('SELECT * FROM material_orders WHERE project_id = ? AND material_type = ? ORDER BY id DESC', [project_id, material_type]);
   return rows;
 };
 

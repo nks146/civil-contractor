@@ -1,3 +1,4 @@
+const { toDDMMYYYY,formatDate } = require('../helpers/dateFormateHelper');
 const {
   createOrder,
   getOrdersByUserId,
@@ -19,7 +20,7 @@ exports.createOrderController = async (req, res) => {
       supplier_contact,
       address,
       quantity,
-      unite_type,
+      unit_type,
       unit_price,
       delivery_date,
       project_id,
@@ -29,14 +30,14 @@ exports.createOrderController = async (req, res) => {
       invoice,
       used_in_projects
     } = req.body;
-
+console.log('Received order data:', req.body);
     // Validate required fields
     if (
       !material_type ||
       !supplier_name ||
       !supplier_contact ||
       !quantity ||
-      !unite_type ||
+      !unit_type ||
       !unit_price ||
       !project_id ||
       !remaining_stock ||
@@ -52,9 +53,9 @@ exports.createOrderController = async (req, res) => {
       supplier_contact,
       address,
       quantity,
-      unite_type,
+      unit_type,
       unit_price,
-      delivery_date,
+      delivery_date: formatDate(delivery_date),
       project_id,
       comment,
       remaining_stock,
@@ -62,7 +63,6 @@ exports.createOrderController = async (req, res) => {
       invoice,
       used_in_projects
     };
-
     const result = await createOrder(orderData);
     res.status(201).json({ message: 'Order created successfully', orderId: result.insertId, data: result });
   } catch (err) {
@@ -168,16 +168,17 @@ exports.deleteOrderController = async (req, res) => {
   }
 };
 
-// Get orders by material type
+// Get orders by project id and material type
 exports.getOrdersByMaterialTypeController = async (req, res) => {
   try {
     const { material_type } = req.params;
+    const { project_id } = req.params;
 
-    if (!material_type) {
-      return res.status(400).json({ message: 'Material type is required' });
+    if (!material_type || !project_id) {
+      return res.status(400).json({ message: 'Material type and project ID are required' });
     }
 
-    const orders = await getOrdersByMaterialType(material_type);
+    const orders = await getOrdersByMaterialType(project_id, material_type);
     res.json({ message: 'Orders retrieved successfully', data: orders });
   } catch (err) {
     console.error('Get Orders by Material Type Error:', err);

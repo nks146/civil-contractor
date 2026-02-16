@@ -17,6 +17,15 @@ app.use(cors({
 //app.use(bodyParser.json());
 app.use(express.json());
 
+// Handle invalid JSON payloads from clients (body-parser / express.json SyntaxError)
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.error('Invalid JSON received:', err.message);
+    return res.status(400).json({ message: 'Invalid JSON payload' });
+  }
+  next();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/project', projectRoutes);
 app.use('/api/worker', workerRoutes);
