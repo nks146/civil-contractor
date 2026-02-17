@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 13, 2026 at 01:35 PM
+-- Generation Time: Feb 17, 2026 at 10:10 AM
 -- Server version: 8.0.45-0ubuntu0.24.04.1
 -- PHP Version: 8.3.6
 
@@ -35,7 +35,7 @@ CREATE TABLE `material_orders` (
   `supplier_contact` varchar(13) NOT NULL,
   `address` varchar(255) DEFAULT NULL,
   `quantity` int NOT NULL,
-  `unite_type` varchar(255) NOT NULL,
+  `unit_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `unit_price` decimal(10,2) NOT NULL,
   `delivery_date` date DEFAULT NULL,
   `project_id` int NOT NULL,
@@ -43,8 +43,17 @@ CREATE TABLE `material_orders` (
   `remaining_stock` int NOT NULL,
   `transportation_cost` decimal(10,2) NOT NULL,
   `invoice` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `used_in_projects` varchar(255) DEFAULT NULL COMMENT 'comma seprated'
+  `used_in_projects` varchar(255) DEFAULT NULL COMMENT 'comma seprated',
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `material_orders`
+--
+
+INSERT INTO `material_orders` (`id`, `user_id`, `material_type`, `supplier_name`, `supplier_contact`, `address`, `quantity`, `unit_type`, `unit_price`, `delivery_date`, `project_id`, `comment`, `remaining_stock`, `transportation_cost`, `invoice`, `used_in_projects`, `created_on`, `updated_on`) VALUES
+(4, 1, 'Sand', 'Ajay Singh', '1212343423', 'Chunar', 10, 'Bag', 200.00, '2026-01-01', 4, 'test test', 10, 1000.00, NULL, '', '2026-02-16 15:05:16', '2026-02-16 15:05:46');
 
 -- --------------------------------------------------------
 
@@ -138,7 +147,8 @@ INSERT INTO `projects` (`id`, `user_id`, `project_name`, `parent_project`, `loca
 (10, 1, 'sdfsdfsd', 0, 'Mirzapur', '2025-12-31', NULL, 'Deleted', NULL, '2025-09-23 12:09:59', '2026-02-11 18:13:03'),
 (11, 4, 'yyyyuy', 0, 'Mirzapur', '2025-12-31', NULL, 'Pending', 'test', '2025-10-10 12:02:27', '2025-10-10 17:32:27'),
 (12, 1, 'Test 123', 5, 'Noida, Uttar Pradesh', '2026-02-26', NULL, 'Hold', 'Due to some leagel issue', '2026-02-05 08:34:03', '2026-02-11 18:20:36'),
-(13, 1, 'test data', 8, 'Noida', '2026-03-01', '2026-06-27', 'Pending', NULL, '2026-02-06 08:52:46', '2026-02-06 14:22:46');
+(13, 1, 'test data', 8, 'Noida', '2026-03-01', '2026-06-27', 'Pending', NULL, '2026-02-06 08:52:46', '2026-02-06 14:22:46'),
+(14, 1, 'ggggg', 0, 'Mirzapur', '2025-12-31', NULL, 'Pending', 'test', '2026-02-16 14:51:41', '2026-02-16 20:21:41');
 
 -- --------------------------------------------------------
 
@@ -357,7 +367,7 @@ ALTER TABLE `worker_projects`
 -- AUTO_INCREMENT for table `material_orders`
 --
 ALTER TABLE `material_orders`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `material_used`
@@ -381,7 +391,7 @@ ALTER TABLE `post_on_project`
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `project_images`
