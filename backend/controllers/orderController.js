@@ -7,7 +7,8 @@ const {
   updateOrder,
   deleteOrder,
   getOrdersByMaterialType,
-  updateRemainingStock
+  updateRemainingStock,
+  getMaterialType
 } = require('../models/orderModel');
 
 // Create a new order
@@ -30,7 +31,6 @@ exports.createOrderController = async (req, res) => {
       invoice,
       used_in_projects
     } = req.body;
-console.log('Received order data:', req.body);
     // Validate required fields
     if (
       !material_type ||
@@ -124,20 +124,20 @@ exports.getOrderByIdController = async (req, res) => {
 // Update order
 exports.updateOrderController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const orderId = req.params.id;
     const orderData = req.body;
-
-    if (!id) {
+    orderData.delivery_date = formatDate(orderData.delivery_date);
+    if (!orderId) {
       return res.status(400).json({ message: 'Order ID is required' });
     }
 
     // Check if order exists
-    const existingOrder = await getOrderById(id);
+    const existingOrder = await getOrderById(orderId);
     if (!existingOrder) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    const result = await updateOrder(id, orderData);
+    const result = await updateOrder(orderId, orderData);
     res.json({ message: 'Order updated successfully', data: result });
   } catch (err) {
     console.error('Update Order Error:', err);
@@ -148,7 +148,7 @@ exports.updateOrderController = async (req, res) => {
 // Delete order
 exports.deleteOrderController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
 
     if (!id) {
       return res.status(400).json({ message: 'Order ID is required' });
@@ -189,7 +189,7 @@ exports.getOrdersByMaterialTypeController = async (req, res) => {
 // Update remaining stock
 exports.updateRemainingStockController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { remaining_stock } = req.body;
 
     if (!id || remaining_stock === undefined) {
@@ -206,6 +206,23 @@ exports.updateRemainingStockController = async (req, res) => {
     res.json({ message: 'Stock updated successfully' });
   } catch (err) {
     console.error('Update Stock Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Get all material type
+exports.getMaterialTypeController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const orders = await getMaterialType(userId);
+    res.json({ message: 'Material types retrieved successfully', data: orders });
+  } catch (err) {
+    console.error('Get Material Types Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

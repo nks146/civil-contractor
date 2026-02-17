@@ -102,3 +102,9 @@ exports.updateRemainingStock = async (id, remaining_stock) => {
   const [result] = await pool.query('UPDATE material_orders SET remaining_stock = ? WHERE id = ?', [remaining_stock, id]);
   return result;
 };
+
+// Get material type
+exports.getMaterialType = async (userId) => {
+  const [rows] = await pool.query('SELECT DISTINCT material_type FROM material_orders WHERE user_id = ?', [userId]);
+  return rows;
+};
