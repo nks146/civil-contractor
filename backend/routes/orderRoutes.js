@@ -9,7 +9,9 @@ const {
   deleteOrderController,
   getOrdersByMaterialTypeController,
   updateRemainingStockController,
-  getMaterialTypeController
+  getMaterialTypeController,
+  getAvailableMaterialController,
+  materialUsedInController
 } = require('../controllers/orderController');
 const auth = require('../middleware/authMiddleware');
 
@@ -25,5 +27,7 @@ router.put('/:id/edit', updateOrderController);                        // Update
 router.delete('/:id/delete', deleteOrderController);                     // Delete
 router.patch('/:id/stock', updateRemainingStockController);       // Update stock
 router.get('/material-types', getMaterialTypeController); // Get all material types name
+router.get('/available-materials', getAvailableMaterialController); // Get available materials stocks
+router.post('/material-used-in', materialUsedInController); // Update used in projects and remaining stock when material is used in project
 
 module.exports = router;

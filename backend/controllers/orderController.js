@@ -8,7 +8,9 @@ const {
   deleteOrder,
   getOrdersByMaterialType,
   updateRemainingStock,
-  getMaterialType
+  getMaterialType,
+  getAvailableMaterials,
+  materialUsedIn
 } = require('../models/orderModel');
 
 // Create a new order
@@ -223,6 +225,40 @@ exports.getMaterialTypeController = async (req, res) => {
     res.json({ message: 'Material types retrieved successfully', data: orders });
   } catch (err) {
     console.error('Get Material Types Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Get stocks of materials (available stock) remaining_stock > 0 in material_orders table
+exports.getAvailableMaterialController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const orders = await getAvailableMaterials(userId);
+    res.json({ message: 'Material retrieved successfully', data: orders });
+  } catch (err) {
+    console.error('Get Material Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Update used in projects and remaining stock when material is used in project
+exports.materialUsedInController = async (req, res) => {
+  try {
+    const materialUsedInData = req.body;
+    materialUsedInData.used_date = formatDate(materialUsedInData.used_date);
+
+    if (!materialUsedInData.order_id || materialUsedInData.quantity_used === undefined) {
+      return res.status(400).json({ message: 'Order ID and quantity used are required' });
+    }
+    const result = await materialUsedIn(materialUsedInData);
+    res.json({ message: 'Material used in project updated successfully', data: result });
+  } catch (err) {
+    console.error('Update Material Used In Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

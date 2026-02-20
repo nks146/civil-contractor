@@ -108,3 +108,45 @@ exports.getMaterialType = async (userId) => {
   const [rows] = await pool.query('SELECT DISTINCT material_type FROM material_orders WHERE user_id = ?', [userId]);
   return rows;
 };
+
+// Get available stock materials
+exports.getAvailableMaterials = async (user_id) => {
+  const [rows] = await pool.query(`
+    SELECT o.id,o.material_type, o.project_id,p.project_name,o.remaining_stock, o.unit_type
+    FROM material_orders o
+    JOIN projects p ON o.project_id = p.id
+    WHERE o.user_id = ? AND o.remaining_stock > 0
+  `, [user_id]);
+  return rows;
+};
+
+// Update used in projects and remaining stock when material is used in project
+exports.materialUsedIn = async (materialUsedInData) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    const sql = 'insert into material_used (order_id, project_id, material_type, quantity_used, unit_type, used_date) values (?, ?, ?, ?, ?, ?)';
+    const values = [
+      materialUsedInData.order_id,
+      materialUsedInData.project_id,
+      materialUsedInData.material_type,
+      materialUsedInData.quantity_used,
+      materialUsedInData.unit_type,
+      materialUsedInData.used_date
+    ];
+    const [result] = await connection.query(sql, values);
+    if(result.affectedRows > 0){
+      const updateStockSql = 'UPDATE material_orders SET remaining_stock = remaining_stock - ?, used_in_projects = CASE WHEN used_in_projects IS NULL OR used_in_projects = "" THEN ? WHEN FIND_IN_SET(?, used_in_projects) = 0  THEN CONCAT(used_in_projects, ",", ?) ELSE used_in_projects END WHERE id = ? ';
+
+      await connection.query(updateStockSql, [materialUsedInData.quantity_used, materialUsedInData.project_id, materialUsedInData.project_id, materialUsedInData.project_id, materialUsedInData.order_id]);
+      await connection.commit();
+      return result;
+    }
+  } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release(); 
+    }
+  
+};
