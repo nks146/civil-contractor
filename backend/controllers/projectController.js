@@ -4,7 +4,7 @@ const fs = require('fs');
 const { getAllProjects, getRootProjects, createProject, updateProject,     softDeleteProject, getProjectById, createPost, savePostImages, 
         deleteMultipleImages, deleteImage, getImageById,
         getImageByIds, updatePostContent, getAssignedWorkersByProject,
-        addWorkerAttendance } = require('../models/projectModel');
+        addWorkerAttendance, getPostsByProjectId, createOtherExpenses, updateOtherExpenses, getAllOtherExpenses, getExpensesById, getAllDistinctExpensesName } = require('../models/projectModel');
 const { validationResult } = require('express-validator');
 const { toDDMMYYYY,formatDate } = require('../helpers/dateFormateHelper');
 
@@ -294,4 +294,93 @@ exports.deleteProject = async (req, res) => {
   }
 }
 
+// Get all posts by project ID
+exports.getAllPostsByProject = async (req, res) => {
+   const projectId = req.params.id;
+   console.log("Project ID for fetching posts:", projectId);
+    try {
+      const posts = await getPostsByProjectId(projectId);
+      res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json({ message: 'Error fetching posts', error: err.message });
+    }
+  };
 
+  // Add other expenses for a project
+exports.addOtherExpenses = async (req, res) => {
+  const { project_id } = req.params;
+  const { expense_name, amount, expense_date, notes } = req.body;
+  if (!expense_name || !amount || !expense_date) {
+    return res.status(400).json({ message: 'Expense name, amount, and date are required' });
+  }
+  try {
+    const newExpense = {
+      project_id,
+      expense_name,
+      amount,
+      expense_date: formatDate(expense_date),
+      notes: notes || null,
+    };    
+    await createOtherExpenses(newExpense);
+    res.status(201).json({ message: 'Expense added successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error adding expense', error: err.message });
+  }
+}
+
+// Edit other expenses for a project
+exports.editOtherExpenses = async (req, res) => {
+  const { expense_id } = req.params;
+  const { project_id, expense_name, amount, expense_date, notes } = req.body;
+  if (!project_id || !expense_name || !amount || !expense_date) {
+    return res.status(400).json({ message: 'Project ID, expense name, amount, and date are required' });
+  }
+  try {
+    const updatedExpense = {
+      expense_name,
+      amount,
+      expense_date: formatDate(expense_date),
+      notes: notes || null,
+      updated_on: new Date()
+    };
+    await updateOtherExpenses(expense_id, updatedExpense);
+    res.status(200).json({ message: 'Expense updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating expense', error: err.message });
+  }
+}
+
+// Get other expenses for a project
+exports.getOtherExpenses = async (req, res) => {
+  const { project_id } = req.params;
+  try {
+    const expenses = await getAllOtherExpenses(project_id);
+    res.status(200).json(expenses);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching expenses', error: err.message });
+  }
+}
+
+// Get other expense by ID
+exports.getOtherExpensesById = async (req, res) => {
+  const { expense_id } = req.params;
+  try {
+    const expense = await getExpensesById(expense_id);
+    if (!expense) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+    res.status(200).json(expense);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching expense', error: err.message });
+  }
+}
+
+// Get all unique expense names
+exports.getAllExpensesName = async (req, res) => {
+  try {
+    const expenseNames = await getAllDistinctExpensesName();
+    res.status(200).json(expenseNames);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching expense names', error: err.message });
+  }
+}

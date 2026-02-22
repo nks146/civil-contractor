@@ -205,3 +205,77 @@ exports.addWorkerAttendance = async (project_id,attendanceList) => {
   const [result] = await pool.query(sql, [values]);
   return result;
 };
+
+// Get all posts by project ID
+exports.getPostsByProjectId = async (projectId) => {
+  const sql = ` SELECT p.*, GROUP_CONCAT(pi.image_path) AS images
+    FROM post_on_project p
+    LEFT JOIN project_images pi ON pi.post_id = p.id
+    WHERE p.project_id = ?
+    GROUP BY p.id
+    ORDER BY p.created_on DESC`;
+  const [rows] = await pool.query(sql, [projectId]);
+  return rows; 
+}
+
+// Add other expenses for a project
+exports.createOtherExpenses = async (newExpense) => {
+  const sql = `
+    INSERT INTO other_expenses 
+      (project_id, expense_name, amount, expense_date, notes, created_on)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+  const now = new Date();
+  const values = [
+    newExpense.project_id,
+    newExpense.expense_name,
+    newExpense.amount,
+    newExpense.expense_date,
+    newExpense.notes || '',
+    now
+  ];
+  const [result] = await pool.query(sql, values);
+  return result;
+};
+
+// Update other expenses for a project
+exports.updateOtherExpenses = async (expenseId, updatedExpense) => {
+  const sql = `
+    UPDATE other_expenses 
+    SET project_id = ?, expense_name = ?, amount = ?, expense_date = ?, notes = ?, updated_on = ?
+    WHERE id = ?
+  `;
+  const now = new Date();
+  const values = [
+    updatedExpense.project_id,
+    updatedExpense.expense_name,
+    updatedExpense.amount,
+    updatedExpense.expense_date,
+    updatedExpense.notes || '',
+    now,
+    expenseId
+  ];
+  const [result] = await pool.query(sql, values);
+  return result;
+};
+
+// Get other expenses by project ID
+exports.getAllOtherExpenses = async (projectId) => {
+  const sql = 'SELECT * FROM other_expenses WHERE project_id = ? ORDER BY created_on DESC';
+  const [rows] = await pool.query(sql, [projectId]);
+  return rows;
+};
+
+// Get other expenses by expense ID
+exports.getExpensesById = async (expenseId) => { 
+  const sql = 'SELECT * FROM other_expenses WHERE id = ?';
+  const [rows] = await pool.query(sql, [expenseId]);
+  return rows[0]; // Return the first (and only) row
+};
+
+// Get all distinct expense names 
+exports.getAllDistinctExpensesName = async () => {
+  const sql = 'SELECT DISTINCT expense_name FROM other_expenses';
+  const [rows] = await pool.query(sql);
+  return rows;
+};
