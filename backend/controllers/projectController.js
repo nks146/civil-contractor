@@ -337,6 +337,7 @@ exports.editOtherExpenses = async (req, res) => {
   }
   try {
     const updatedExpense = {
+      project_id,
       expense_name,
       amount,
       expense_date: formatDate(expense_date),
