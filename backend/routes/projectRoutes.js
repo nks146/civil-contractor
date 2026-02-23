@@ -6,7 +6,7 @@ const { addProject,allProject,getProjectDetails,deleteProject,rootProjects,postO
         getAssignedWorkersByProjectController, addWorkerAttendanceController,getAllPostsByProject, addOtherExpenses, editOtherExpenses, getOtherExpenses, getOtherExpensesById, getAllExpensesName } = require('../controllers/projectController');
 
 router.use(auth);
-router.get('/other-expenses/expenses-name', getAllExpensesName);
+
 router.get('/', allProject);
 router.get('/root-projects', rootProjects);
 router.post('/add', addProject);
@@ -24,7 +24,8 @@ router.get('/:project_id/workers', getAssignedWorkersByProjectController);
 router.post('/:project_id/workers_attendance', addWorkerAttendanceController);
 router.post('/:project_id/add-other-expenses', addOtherExpenses);
 router.get('/:project_id/other-expenses', getOtherExpenses);
-router.get('/other-expenses/:expense_id', getOtherExpensesById);
+router.get('/other-expenses/expenses-name', getAllExpensesName); //for auto suggestion of expenses name in frontend
+router.get('/other-expenses/expense-id/:expense_id', getOtherExpensesById);
 router.put('/edit-other-expenses/:expense_id', editOtherExpenses);
 
 
