@@ -208,7 +208,7 @@ exports.addWorkerAttendance = async (project_id,attendanceList) => {
 
 // Get all posts by project ID
 exports.getPostsByProjectId = async (projectId) => {
-  const sql = ` SELECT p.*, GROUP_CONCAT(pi.image_path) AS images
+  const sql = ` SELECT p.*, GROUP_CONCAT(pi.image_path SEPARATOR '##') AS images
     FROM post_on_project p
     LEFT JOIN project_images pi ON pi.post_id = p.id
     WHERE p.project_id = ?
@@ -216,6 +216,19 @@ exports.getPostsByProjectId = async (projectId) => {
     ORDER BY p.created_on DESC`;
   const [rows] = await pool.query(sql, [projectId]);
   return rows; 
+}
+
+// Get latest post of a project
+exports.getLastPostOfProject = async (projectId) => {
+  const sql = ` SELECT p.*, GROUP_CONCAT(pi.image_path SEPARATOR '##') AS images
+    FROM post_on_project p
+    LEFT JOIN project_images pi ON pi.post_id = p.id
+    WHERE p.project_id = ?
+    GROUP BY p.id
+    ORDER BY p.created_on DESC
+    LIMIT 1`;
+  const [rows] = await pool.query(sql, [projectId]);
+  return rows[0]; 
 }
 
 // Add other expenses for a project
@@ -277,5 +290,19 @@ exports.getExpensesById = async (expenseId) => {
 exports.getAllDistinctExpensesName = async () => {
   const sql = 'SELECT DISTINCT expense_name FROM other_expenses';
   const [rows] = await pool.query(sql);
+  return rows;
+};
+
+// Get all materials used in a project
+exports.getUsedMaterialsInProject = async (projectId) => {
+  const sql = `
+    SELECT m.material_type, sum(m.quantity_used) as total_quantity_used, m.unit_type, mo.unit_price, sum(m.quantity_used * mo.unit_price) as total_cost
+    FROM material_used m
+    JOIN material_orders mo ON mo.id = m.order_id
+    WHERE m.project_id = ?
+    GROUP BY m.material_type, m.unit_type, mo.unit_price
+    order by m.material_type
+  `;
+  const [rows] = await pool.query(sql, [projectId]);
   return rows;
 };

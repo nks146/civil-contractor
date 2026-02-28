@@ -26,3 +26,29 @@ export const updateProject = async (id, payload) => {
 export const deleteProject = async (id) => {
   return api.delete(`/api/project/${id}/delete`);
 };
+
+/* ---------- POSTS ---------- */
+export const getLatestPost = async (projectId) => {
+  const res = await api.get(`/api/project/${projectId}/latest-post`); 
+  return res.data;
+};
+
+export const getProjectPosts = async (projectId) => {
+  const res = await api.get(`/api/project/${projectId}/get-all-posts`);
+  return res.data;
+};
+
+/* ---------- WORKERS ---------- */
+export const getProjectWorkers = async (projectId) => {
+  return api.get(`/api/project/${projectId}/workers`);
+}
+
+/* ---------- MATERIALS ---------- */
+export const getProjectUsedMaterials = async (projectId) => {
+  return api.get(`/api/project/${projectId}/used-materials`);
+}
+
+/* ---------- EXPENSES ---------- */
+export const getProjectExpenses = async (projectId) => {
+  return api.get(`/api/project/${projectId}/other-expenses`);
+}

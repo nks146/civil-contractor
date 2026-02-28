@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 export default function Sidebar() {
   return (
     <div className="w-64 bg-gray-800 text-gray-200 p-4">
-      <h2 className="text-2xl font-bold mb-8 text-blue-600">
+      <h2 className="text-2xl font-bold mb-8 text-blue-300">
         Civil Contractor
       </h2>
 
