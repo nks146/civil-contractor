@@ -4,7 +4,7 @@ const fs = require('fs');
 const { getAllProjects, getRootProjects, createProject, updateProject,     softDeleteProject, getProjectById, createPost, savePostImages, 
         deleteMultipleImages, deleteImage, getImageById,
         getImageByIds, updatePostContent, getAssignedWorkersByProject,
-        addWorkerAttendance, getPostsByProjectId, createOtherExpenses, updateOtherExpenses, getAllOtherExpenses, getExpensesById, getAllDistinctExpensesName } = require('../models/projectModel');
+        addWorkerAttendance, getPostsByProjectId, createOtherExpenses, updateOtherExpenses, getAllOtherExpenses, getExpensesById, getAllDistinctExpensesName, getLastPostOfProject, getUsedMaterialsInProject } = require('../models/projectModel');
 const { validationResult } = require('express-validator');
 const { toDDMMYYYY,formatDate } = require('../helpers/dateFormateHelper');
 
@@ -306,6 +306,17 @@ exports.getAllPostsByProject = async (req, res) => {
     }
   };
 
+  // Get latest post of a project
+exports.getLetestPostOfProject = async (req, res) => {
+  const projectId = req.params.id;
+   try {
+     const post = await getLastPostOfProject(projectId);
+     res.status(200).json(post);
+   } catch (err) {
+     res.status(500).json({ message: 'Error fetching latest post', error: err.message });
+   }
+  };
+
   // Add other expenses for a project
 exports.addOtherExpenses = async (req, res) => {
   const { project_id } = req.params;
@@ -384,4 +395,15 @@ exports.getAllExpensesName = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error fetching expense names', error: err.message });
   }
+}
+
+// Get used materials details in a project
+exports.getMaterialsInProject = async(req, res) => {
+  const { project_id } = req.params;
+  try {
+    const materials = await getUsedMaterialsInProject(project_id);
+    res.status(200).json(materials);
+  } catch (err) {
+     res.status(500).json({ message: 'Error fetching materials', error: err.message });
+ }
 }

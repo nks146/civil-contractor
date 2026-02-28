@@ -41,7 +41,7 @@ export default function Projects() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">My Projects</h2>
 
-        <button onClick={() => navigate("/projects/add")} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button onClick={() => navigate("/projects/add")} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
           + Add Project
         </button>
       </div>
@@ -92,7 +92,7 @@ export default function Projects() {
               <div className="mt-3 space-x-3 text-sm">
                 <button
                   onClick={() => navigate(`/projects/${p.id}`)}
-                  className="text-blue-600 hover:underline"
+                  className="text-blue-300 hover:underline"
                 >
                   View
                 </button>

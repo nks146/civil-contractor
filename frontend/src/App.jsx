@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AddProject from "./pages/project/AddProject";
 import EditProject from "./pages/project/EditProject";
+import ProjectDetails from "./pages/project/ProjectDetails";
 
 export default function App() {
    const dispatch = useDispatch();
@@ -39,7 +40,8 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/add" element={<AddProject />} />
-         <Route path="/projects/:id/edit" element={<EditProject />} />
+        <Route path="/projects/:id/edit" element={<EditProject />} />
+        <Route path="/projects/:id" element={<ProjectDetails />} />
       </Route>
     </Routes>
   );
