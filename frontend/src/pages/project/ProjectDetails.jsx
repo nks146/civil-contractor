@@ -8,6 +8,7 @@ import ProjectUpdatesTab from "../../components/project/ProjectUpdatesTab";
 import WorkersTab from "../../components/project/WorkersTab";
 import MaterialsTab from "../../components/project/MaterialsTab";
 import ExpensesTab from "../../components/project/ExpensesTab";
+import EditPostModal from "../../components/project/EditPostModal";
 import { getProjectById,getLatestPost,getProjectPosts,getProjectWorkers,
   getProjectUsedMaterials,getProjectExpenses
         } from "../../services/projectService";
@@ -41,7 +42,7 @@ const [expenses,setExpenses] = useState([]);
    const data=await getProjectById(id);
    setProject(data);
 
- }
+ } 
 
   useEffect(()=>{
     if(activeTab==="overview")
@@ -74,7 +75,7 @@ const [expenses,setExpenses] = useState([]);
   };
 
   const loadPosts = async () => {
-    const data = await getProjectPosts(id); console.log(data);
+    const data = await getProjectPosts(id); 
     // convert images field from ##-separated string to array
     const normalized = data.map((post) => {
       if (post && typeof post.images === 'string') {
@@ -130,6 +131,18 @@ const [expenses,setExpenses] = useState([]);
     }));  
   }
 
+  // Update post on project
+  const [editingPost,setEditingPost] = useState(null);
+  const handleEditPost = (post)=>{
+    setEditingPost(post); 
+  };
+  const handleSavePost = async(postId,formData)=>{
+    await updatePost(postId,formData);
+    setEditingPost(null);
+    loadPosts();
+    loadLatestPost();
+  };
+
  if(!project) return <p>Loading...</p>
 
   return (
@@ -171,10 +184,10 @@ const [expenses,setExpenses] = useState([]);
         </div>
         <div className="p-6">
           {activeTab === "overview" &&
-            <OverviewTab latestPost={latestPost} />
+            <OverviewTab latestPost={latestPost} onEdit={handleEditPost} />
           }
           {activeTab === "updates" &&
-            <ProjectUpdatesTab posts={posts} />
+            <ProjectUpdatesTab posts={posts} onEdit={handleEditPost} />
           }
           {activeTab === "workers" &&
             <WorkersTab workers={workers} />
@@ -187,7 +200,14 @@ const [expenses,setExpenses] = useState([]);
           }
         </div>
       </div>
-    </div>
+       {editingPost && (
+          <EditPostModal
+            post={editingPost}
+            onClose={()=>setEditingPost(null)}
+            onSave={handleSavePost}
+          />
+        )}
+    </div>   
   );
 }
 

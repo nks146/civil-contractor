@@ -1,5 +1,5 @@
 
-export default function OverviewTab({ latestPost }) {
+export default function OverviewTab({ latestPost, onEdit }) {
  if(!latestPost)
    return <p>No updates yet</p>;
 

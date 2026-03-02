@@ -1,4 +1,4 @@
-export default function ProjectUpdatesTab({ posts }) {
+export default function ProjectUpdatesTab({ posts, onEdit }) {
   return (
     <div className="space-y-6">
       {posts.map(post => (
