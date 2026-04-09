@@ -1,11 +1,10 @@
 import { useState } from "react";
-export default function EditPostModal({
+export default function EditPostImageModal({
     post,
     onClose,
     onSave
 }) {
     /* ---------- STATES ---------- */
-    const [description, setDescription] = useState(post.post_comment);
     const [existingImages, setExistingImages] = useState(post.images || []);
     const [newImages, setNewImages] = useState([]);
     const [preview, setPreview] = useState([]);
@@ -40,7 +39,6 @@ export default function EditPostModal({
     /* ---------- SAVE ---------- */
     const handleSubmit = () => {
         const formData = new FormData();
-        formData.append("description", description);
         formData.append(
             "existingImages",
             JSON.stringify(existingImages)
@@ -59,14 +57,6 @@ export default function EditPostModal({
                 <h3 className="text-white text-lg mb-4">
                     Edit Project Update
                 </h3>
-
-                {/* DESCRIPTION */}
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white mb-4"
-                    rows="4"
-                />
 
                 {/* EXISTING IMAGES */}
                 <h4 className="text-gray-300 mb-2">

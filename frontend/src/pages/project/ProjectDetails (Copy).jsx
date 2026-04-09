@@ -136,9 +136,8 @@ const [expenses,setExpenses] = useState([]);
   const handleEditPost = (post)=>{ 
     setEditingPost(post); 
   };
-  const handleSavePost = async(postId,formData)=>{ 
-    const formValues = formData.get("description") || formData.get("existingImages") || formData.getAll("images");
-    //await updatePost(postId,formData);
+  const handleSavePost = async(postId,formData)=>{ console.log("Saving post",postId,formData);
+    await updatePost(postId,formData);
     setEditingPost(null);
     loadPosts();
     loadLatestPost();
@@ -185,10 +184,10 @@ const [expenses,setExpenses] = useState([]);
         </div>
         <div className="p-6">
           {activeTab === "overview" &&
-            <OverviewTab latestPost={latestPost} onEdit={handleSavePost} />
+            <OverviewTab latestPost={latestPost} onEdit={handleEditPost} />
           }
           {activeTab === "updates" &&
-            <ProjectUpdatesTab posts={posts} onEdit={handleSavePost} />
+            <ProjectUpdatesTab posts={posts} onEdit={handleEditPost} />
           }
           {activeTab === "workers" &&
             <WorkersTab workers={workers} />
@@ -201,13 +200,13 @@ const [expenses,setExpenses] = useState([]);
           }
         </div>
       </div>
-       {/* {editingPost && (
+       {editingPost && (
           <EditPostModal
             post={editingPost}
             onClose={()=>setEditingPost(null)}
             onSave={handleSavePost}
           />
-        )} */}
+        )}
     </div>   
   );
 }
