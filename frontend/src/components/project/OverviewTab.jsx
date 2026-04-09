@@ -1,5 +1,11 @@
+import { useState } from "react";
+import EditDropdown from "./EditPostDropdown";
+import EditPostCommentModal from "./EditPostCommentModal";
+import EditPostImageModal from "./EditPostImageModal";
 
-export default function OverviewTab({ latestPost }) {
+export default function OverviewTab({ latestPost, onEdit }) {
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
  if(!latestPost)
    return <p>No updates yet</p>;
 
@@ -10,14 +16,21 @@ export default function OverviewTab({ latestPost }) {
        <h3 className="text-lg text-white">
          Latest Update
        </h3>
-       <button
-         onClick={() => onEdit(latestPost)}
-         className="text-blue-400 hover:text-blue-300 text-sm"
-       >
-         Edit
-       </button>
+       <EditDropdown
+        onEditComment={() => setShowCommentModal(true)}
+        onEditImages={() => setShowImageModal(true)}
+       />
      </div>
 
+    <p className="text-gray-400 text-sm">
+     {latestPost.created_on.slice(0,10)}
+    </p> 
+     {/* Description */}
+
+    <p className="text-gray-300 mb-3">
+     {latestPost.post_comment}
+    </p>
+   
    {/* Images */}
 
    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
@@ -33,20 +46,22 @@ export default function OverviewTab({ latestPost }) {
      ))}
 
    </div>
+   {/* Modals */}
+      {showCommentModal && (
+        <EditPostCommentModal
+          post={latestPost}
+          onClose={() => setShowCommentModal(false)}
+          onSave={onEdit}
+        />
+      )}
 
-   {/* Description */}
-
-   <p className="text-gray-300 mb-3">
-
-     {latestPost.post_comment}
-
-   </p>
-
-   <p className="text-gray-400 text-sm">
-
-     {latestPost.created_on.slice(0,10)}
-
-   </p>
+      {showImageModal && (
+        <EditPostImageModal
+          post={latestPost}
+          onClose={() => setShowImageModal(false)}
+          onSave={onEdit}
+        />
+      )}
 
   </div>
 

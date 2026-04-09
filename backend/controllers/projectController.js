@@ -85,7 +85,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).array('images', 10); // up to 10 images
 
-console.log("Upload Middleware:", upload);
 exports.postOnProject = (req, res) => { 
   upload(req, res, async function (err) {
     if (err) {
