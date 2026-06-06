@@ -35,7 +35,7 @@ export default function EditProject() {
   };
 
   const handleUpdate = async (data) => {
-    await updateProject(id, data); console.log(data);
+    await updateProject(id, data); 
     navigate("/projects");
 
   };

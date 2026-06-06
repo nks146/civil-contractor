@@ -8,9 +8,10 @@ import ProjectUpdatesTab from "../../components/project/ProjectUpdatesTab";
 import WorkersTab from "../../components/project/WorkersTab";
 import MaterialsTab from "../../components/project/MaterialsTab";
 import ExpensesTab from "../../components/project/ExpensesTab";
-import EditPostModal from "../../components/project/EditPostModal";
+//import EditPostModal from "../../components/project/EditPostModal";
 import { getProjectById,getLatestPost,getProjectPosts,getProjectWorkers,
-  getProjectUsedMaterials,getProjectExpenses
+  getProjectUsedMaterials,getProjectExpenses,updateProjectPostComment,
+  addImagesOnPost
         } from "../../services/projectService";
 
 
@@ -58,17 +59,10 @@ const [expenses,setExpenses] = useState([]);
   },[activeTab]);
 
   const loadLatestPost = async () => {
-    const data = await getLatestPost(id);
+    const data = await getLatestPost(id); 
     if (!data) {
       setLatestPost(null);
       return;
-    }
-
-    // normalize images field
-    if (typeof data.images === 'string') {
-      data.images = data.images ? data.images.split('##') : [];
-    } else if (!Array.isArray(data.images)) {
-      data.images = [];
     }
 
     setLatestPost(data);
@@ -76,17 +70,7 @@ const [expenses,setExpenses] = useState([]);
 
   const loadPosts = async () => {
     const data = await getProjectPosts(id); 
-    // convert images field from ##-separated string to array
-    const normalized = data.map((post) => {
-      if (post && typeof post.images === 'string') {
-        return {
-          ...post,
-          images: post.images ? post.images.split('##') : []
-        };
-      }
-      return post;
-    });
-    setPosts(normalized);
+    setPosts(data);
   };
 
   const loadWorkers = async()=>{
@@ -136,9 +120,27 @@ const [expenses,setExpenses] = useState([]);
   const handleEditPost = (post)=>{ 
     setEditingPost(post); 
   };
-  const handleSavePost = async(postId,formData)=>{ 
-    const formValues = formData.get("description") || formData.get("existingImages") || formData.getAll("images");
-    //await updatePost(postId,formData);
+  const handleSavePost = async (postId, data) => {
+    if (data instanceof FormData) {
+      const images = data.getAll("images");
+
+      if (images.length === 0) {
+        console.error("No images found in form data");
+        return;
+      }
+
+      await addImagesOnPost(postId, data);
+      loadPosts();
+      loadLatestPost();
+      return;
+    }
+
+    const postComment = data.post_comment;
+    if (postComment === null || postComment === undefined) {
+      console.error("No comment found in form data");
+      return;
+    }
+    await updateProjectPostComment(postId, data);
     setEditingPost(null);
     loadPosts();
     loadLatestPost();

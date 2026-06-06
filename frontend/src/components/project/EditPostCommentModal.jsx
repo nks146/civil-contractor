@@ -8,10 +8,13 @@ export default function EditPostCommentModal({
     const [description, setDescription] = useState(post.post_comment);    
 
     /* ---------- SAVE ---------- */
-    const handleSubmit = () => {
-        const formData = new FormData();
-        formData.append("description", description);
-        onSave(post.id, formData);
+    const handleSubmit = async () => {
+        const jsonData = {
+            post_comment: description
+        };
+
+        await onSave(post.id, jsonData);
+        onClose();
     };
 
     /* ---------- UI ---------- */
@@ -24,6 +27,7 @@ export default function EditPostCommentModal({
 
                 {/* DESCRIPTION */}
                 <textarea
+                    name="post_comment"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white mb-4"

@@ -38,6 +38,19 @@ export const getProjectPosts = async (projectId) => {
   return res.data;
 };
 
+export const updateProjectPostComment = async (id, payload) => {
+  //const body = typeof payload === 'string' ? { post_comment: payload } : payload;
+  return api.put(`/api/project/post/${id}/edit`, payload);
+};
+
+export const deletePostImage = async (id) => {
+  return api.delete(`/api/project/image/${id}`);
+};
+
+export const addImagesOnPost = async (id, payload) => {
+  return api.post(`/api/project/add-images/post/${id}`, payload);
+};
+
 /* ---------- WORKERS ---------- */
 export const getProjectWorkers = async (projectId) => {
   return api.get(`/api/project/${projectId}/workers`);

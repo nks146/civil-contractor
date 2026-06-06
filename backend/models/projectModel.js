@@ -106,9 +106,9 @@ exports.createPost = async (post) => {
 };
 
 // Delete a single image by image ID and post ID
-exports.deleteImage = async (imageId) => { console.log("Image ID to delete inside model:", imageId);
+exports.deleteImage = async (imageId) => { 
   const sql = 'DELETE FROM project_images WHERE id = ?';
-  const [result] = pool.query(sql, [imageId]);
+  const [result] = await pool.query(sql, [imageId]);
   return result;
 };
 
@@ -123,7 +123,8 @@ exports.deleteMultipleImages = async (imageIds) => {
 
 // Get image by ID
 exports.getImageById = async (imageId) => { 
-  const [result] = pool.query('SELECT * FROM project_images WHERE id = ?', [imageId]);
+  const [result] = await pool.query('SELECT * FROM project_images WHERE id = ?', [imageId]);
+  console.log("Image fetched by ID:", result);
   return result;
 };
 
@@ -208,25 +209,33 @@ exports.addWorkerAttendance = async (project_id,attendanceList) => {
 
 // Get all posts by project ID
 exports.getPostsByProjectId = async (projectId) => {
-  const sql = ` SELECT p.*, GROUP_CONCAT(pi.image_path SEPARATOR '##') AS images
+  const sql = `
+    SELECT 
+      p.*,
+      COALESCE(JSON_ARRAYAGG(JSON_OBJECT('id', pi.id, 'image_path', pi.image_path)), JSON_ARRAY()) AS images
     FROM post_on_project p
     LEFT JOIN project_images pi ON pi.post_id = p.id
     WHERE p.project_id = ?
     GROUP BY p.id
-    ORDER BY p.created_on DESC`;
+    ORDER BY p.created_on DESC
+  `;
   const [rows] = await pool.query(sql, [projectId]);
   return rows; 
 }
 
 // Get latest post of a project
 exports.getLastPostOfProject = async (projectId) => {
-  const sql = ` SELECT p.*, GROUP_CONCAT(pi.image_path SEPARATOR '##') AS images
+  const sql = `
+    SELECT 
+      p.*,
+      COALESCE(JSON_ARRAYAGG(JSON_OBJECT('id', pi.id, 'image_path', pi.image_path)), JSON_ARRAY()) AS images
     FROM post_on_project p
     LEFT JOIN project_images pi ON pi.post_id = p.id
     WHERE p.project_id = ?
     GROUP BY p.id
     ORDER BY p.created_on DESC
-    LIMIT 1`;
+    LIMIT 1
+  `;
   const [rows] = await pool.query(sql, [projectId]);
   return rows[0]; 
 }

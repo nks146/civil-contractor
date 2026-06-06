@@ -41,8 +41,8 @@ export default function ProjectUpdatesTab({ posts, onEdit }) {
             {Array.isArray(post.images) &&
               post.images.map((img) => (
                 <img
-                  key={img}
-                  src={img}
+                  key={img.id}
+                  src={img.image_path}
                   className="rounded-lg h-32 w-full object-cover"
                 />
               ))}

@@ -35,11 +35,11 @@ export default function OverviewTab({ latestPost, onEdit }) {
 
    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
 
-     {Array.isArray(latestPost.images) && latestPost.images.map(img => (
-
+     {Array.isArray(latestPost.images) && latestPost.images.filter(img => img.id > 0).map(img => (        
        <img
-        key={img}
-        src={img}
+        key={img.id}
+        src={img.image_path}
+        id={img.id}
         className="rounded-lg h-32 w-full object-cover"
        />
 
