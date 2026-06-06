@@ -190,13 +190,12 @@ exports.getProjectDetails = async (req, res) => {
 };
 
 // Delete a single image
-/*const deleteSingleImage = async (req, res) => {
+exports.deleteSingleImage = async (req, res) => {
   const { imageId } = req.params; 
   try {
     // Optionally: Get image path from DB and delete file from disk
     const image = await getImageById(imageId);
-    console.log("Image to delete:", image[0].image_path);
-    if (!image || !image[0].image_path) {
+    if (!image || image.length === 0 || !image[0].image_path) {
       return res.status(404).json({ message: 'Image not found' });
     }
     // Delete file from disk if it exists
@@ -208,7 +207,7 @@ exports.getProjectDetails = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error deleting image', error: err.message });
   }
-};*/
+};
 
 // Delete multiple images
 exports.deleteImages = async (req, res) => {
@@ -220,7 +219,6 @@ exports.deleteImages = async (req, res) => {
     // Get image records from DB
     const images = await getImageByIds(imageIds);
     // Delete each file from disk if it exists
-    console.log("Images to delete:", images);
     images.forEach(image => {
       if (image.image_path && fs.existsSync(image.image_path)) {
         try {
@@ -296,7 +294,6 @@ exports.deleteProject = async (req, res) => {
 // Get all posts by project ID
 exports.getAllPostsByProject = async (req, res) => {
    const projectId = req.params.id;
-   console.log("Project ID for fetching posts:", projectId);
     try {
       const posts = await getPostsByProjectId(projectId);
       res.status(200).json(posts);

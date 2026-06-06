@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const { addProject,allProject,getProjectDetails,deleteProject,rootProjects,postOnProject,addMorePostImages,
         deleteImages, editProject, editPostContent, 
-        getAssignedWorkersByProjectController, addWorkerAttendanceController,getAllPostsByProject, getLetestPostOfProject, addOtherExpenses, editOtherExpenses, getOtherExpenses, getOtherExpensesById, getAllExpensesName, getMaterialsInProject  } = require('../controllers/projectController');
+        getAssignedWorkersByProjectController, addWorkerAttendanceController,getAllPostsByProject, getLetestPostOfProject, addOtherExpenses, editOtherExpenses, getOtherExpenses, getOtherExpensesById, getAllExpensesName, getMaterialsInProject, deleteSingleImage  } = require('../controllers/projectController');
 
 router.use(auth);
 
@@ -17,7 +17,7 @@ router.post('/:id/post', postOnProject);
 router.get('/:id/get-all-posts', getAllPostsByProject);
 router.get('/:id/latest-post', getLetestPostOfProject);
 //router.post('/:id/post/add-images', addMorePostImages);
-//router.delete('/image/:imageId', deleteSingleImage);
+router.delete('/image/:imageId', deleteSingleImage);
 router.delete('/images', deleteImages);
 router.post('/add-images/post/:id', addMorePostImages);
 router.put('/post/:id/edit', editPostContent);
