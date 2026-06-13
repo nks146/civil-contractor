@@ -10,6 +10,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AddProject from "./pages/project/AddProject";
 import EditProject from "./pages/project/EditProject";
 import ProjectDetails from "./pages/project/ProjectDetails";
+import Workers from "./pages/workers/Workers";
+import AddWorker from "./pages/workers/AddWorker";
 
 export default function App() {
    const dispatch = useDispatch();
@@ -42,6 +44,8 @@ export default function App() {
         <Route path="/projects/add" element={<AddProject />} />
         <Route path="/projects/:id/edit" element={<EditProject />} />
         <Route path="/projects/:id" element={<ProjectDetails />} />
+        <Route path="/workers" element={<Workers />} />
+        <Route path="/workers/add" element={<AddWorker />} />
       </Route>
     </Routes>
   );
