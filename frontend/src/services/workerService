@@ -1,0 +1,6 @@
+import api from "../api/axios";
+
+export const getWorkers = async () => {
+  const res = await api.get("/api/worker");
+  return res.data;
+};
