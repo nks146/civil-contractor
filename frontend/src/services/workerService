@@ -4,3 +4,7 @@ export const getWorkers = async () => {
   const res = await api.get("/api/worker");
   return res.data;
 };
+
+export const createWorker = async (payload) => {
+  return api.post("/api/worker/add", payload);
+};

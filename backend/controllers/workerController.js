@@ -4,10 +4,11 @@ const { addWorker, editWorker, deleteWorker, getWorkerlist, assignProjectToWorke
 // Validation helpers
 const isValidStatus = (status) => ['Active', 'Inactive', 'Engaged'].includes(status);
 
-exports.addWorkerController = async (req, res) => {
-  const { user_id, worker_name, address, contact, status, base_rate, expertise } = req.body;
-  if (!user_id || !worker_name || !status) {
-    return res.status(400).json({ message: 'user_id, worker_name, and status are required' });
+exports.addWorkerController = async (req, res) => { 
+  const user_id = req.user.id;
+  const { worker_name, address, contact, status, base_rate, expertise } = req.body;
+  if (!worker_name || !status) {
+    return res.status(400).json({ message: 'worker_name and status are required' });
   }
   if (!isValidStatus(status)) {
     return res.status(400).json({ message: 'Invalid status value' });
@@ -18,7 +19,7 @@ exports.addWorkerController = async (req, res) => {
   try {
     const now = new Date();
     const worker = {
-      user_id,
+      user_id: user_id,
       worker_name,
       address,
       contact,
@@ -125,4 +126,3 @@ exports.deleteAssignedProjectFromWorkerController = async (req, res) => {
     res.status(500).json({ message: 'Error deleting assignment', error: err.message });
   }
 };
-
