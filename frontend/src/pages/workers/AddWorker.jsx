@@ -1,6 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import WorkerForm from "../../components/worker/WorkerForm";
+import { createWorker } from "../../services/workerService";
 
 export default function AddWorker() {
+  const navigate = useNavigate();
+
+  const handleCreate = async (data) => {
+    await createWorker(data);
+    navigate("/workers");
+  };
 
   return(
 
@@ -10,7 +18,7 @@ export default function AddWorker() {
         Add Worker
       </h1>
 
-      <WorkerForm/>
+      <WorkerForm onSubmit={handleCreate}/>
 
     </div>
 
