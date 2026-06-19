@@ -57,7 +57,26 @@ exports.deleteWorker = async (id) => {
 
 // Get workers list
 exports.getWorkerlist = async (userId) => { 
-  const [rows] = await pool.query('SELECT * FROM workers WHERE user_id = ? ORDER BY created_on DESC', [userId]);
+  const sql = `
+    SELECT 
+      w.*,
+      ep.project_id,
+      ep.engaged_project_name
+    FROM workers w
+    LEFT JOIN (
+      SELECT 
+        wp.worker_id,
+        p.user_id,
+        GROUP_CONCAT(p.id ORDER BY wp.assigned_on DESC SEPARATOR ', ') AS project_id,
+        GROUP_CONCAT(p.project_name ORDER BY wp.assigned_on DESC SEPARATOR ', ') AS engaged_project_name
+      FROM worker_projects wp
+      INNER JOIN projects p ON p.id = wp.project_id
+      GROUP BY wp.worker_id, p.user_id
+    ) ep ON ep.worker_id = w.id AND ep.user_id = w.user_id
+    WHERE w.user_id = ?
+    ORDER BY w.created_on DESC
+  `;
+  const [rows] = await pool.query(sql, [userId]);
   return rows;
 };
 
