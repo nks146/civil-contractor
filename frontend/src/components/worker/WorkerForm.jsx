@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { validateWorker } from "../../utils/validation";
-import { handleNameChange, handleContactChange, handleRateChange } from "../../utils/inputValidation";
+import { validateWorker, handleNameChange, handleContactChange, handleRateChange } from "../../utils/validation";
 
 export default function WorkerForm({ onSubmit, initialData = {} }) {
   const [errors, setError] = useState("");
