@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { addWorkerController, editWorkerController, deleteWorkerController, 
     workerListController, assignProjectToWorkerController,
-    deleteAssignedProjectFromWorkerController } = require('../controllers/workerController');
+    deleteAssignedProjectFromWorkerController, getWorkerByIdController } = require('../controllers/workerController');
 const auth = require('../middleware/authMiddleware');
 
 router.use(auth);
 
 router.get('/', workerListController);
+router.get('/:id', getWorkerByIdController);
 router.post('/add', addWorkerController);
 router.put('/:id/edit', editWorkerController);
 router.delete('/:id', deleteWorkerController);

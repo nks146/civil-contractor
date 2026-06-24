@@ -12,6 +12,7 @@ import EditProject from "./pages/project/EditProject";
 import ProjectDetails from "./pages/project/ProjectDetails";
 import Workers from "./pages/workers/Workers";
 import AddWorker from "./pages/workers/AddWorker";
+import EditWorker from "./pages/workers/EditWorker";
 
 export default function App() {
    const dispatch = useDispatch();
@@ -46,6 +47,7 @@ export default function App() {
         <Route path="/projects/:id" element={<ProjectDetails />} />
         <Route path="/workers" element={<Workers />} />
         <Route path="/workers/add" element={<AddWorker />} />
+        <Route path="/workers/:id/edit" element={<EditWorker />} />
       </Route>
     </Routes>
   );

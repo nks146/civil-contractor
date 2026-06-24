@@ -61,14 +61,16 @@ exports.getWorkerlist = async (userId) => {
     SELECT 
       w.*,
       ep.project_id,
-      ep.engaged_project_name
+      ep.engaged_project_name,
+      ep.current_daily_rate
     FROM workers w
     LEFT JOIN (
       SELECT 
         wp.worker_id,
         p.user_id,
         GROUP_CONCAT(p.id ORDER BY wp.assigned_on DESC SEPARATOR ', ') AS project_id,
-        GROUP_CONCAT(p.project_name ORDER BY wp.assigned_on DESC SEPARATOR ', ') AS engaged_project_name
+        GROUP_CONCAT(p.project_name ORDER BY wp.assigned_on DESC SEPARATOR ', ') AS engaged_project_name,
+        GROUP_CONCAT(wp.rate_per_day ORDER BY wp.assigned_on DESC SEPARATOR ', ') AS current_daily_rate
       FROM worker_projects wp
       INNER JOIN projects p ON p.id = wp.project_id
       GROUP BY wp.worker_id, p.user_id
@@ -135,5 +137,12 @@ exports.deleteAssignedProjectFromWorker = async (worker_id, assignment_id) => {
   } finally {
     connection.release();
   }
+};
+
+// Get worker by ID
+exports.getWorkerById = async (id) => {
+  const sql = 'SELECT * FROM workers WHERE id = ?';
+  const [rows] = await pool.query(sql, [id]);
+  return rows[0];
 };
   

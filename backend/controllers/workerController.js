@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { addWorker, editWorker, deleteWorker, getWorkerlist, assignProjectToWorker, deleteAssignedProjectFromWorker } = require('../models/workerModel');
+const { addWorker, editWorker, deleteWorker, getWorkerlist, assignProjectToWorker, deleteAssignedProjectFromWorker, getWorkerById } = require('../models/workerModel');
 
 // Validation helpers
 const isValidStatus = (status) => ['Active', 'Inactive', 'Engaged'].includes(status);
@@ -126,3 +126,16 @@ exports.deleteAssignedProjectFromWorkerController = async (req, res) => {
     res.status(500).json({ message: 'Error deleting assignment', error: err.message });
   }
 };
+
+exports.getWorkerByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const worker = await getWorkerById(id);
+    if (!worker) {
+      return res.status(404).json({ message: 'Worker not found' });
+    }
+    res.status(200).json(worker);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching worker', error: err.message });
+  }
+};  
