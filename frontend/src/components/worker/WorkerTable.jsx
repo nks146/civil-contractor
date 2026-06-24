@@ -25,6 +25,7 @@ export default function WorkerTable({ workers }) {
                         <th className="p-3 text-left">Expertise</th>
                         <th className="p-3 text-left">Status</th>
                         <th className="p-3 text-left">Created On</th>
+                        <th className="p-3 text-left">Updated On</th>
                         <th className="p-3 text-left">Action</th>
                     </tr>
                 </thead>
@@ -59,6 +60,8 @@ export default function WorkerTable({ workers }) {
                                         >
                                             <p className="text-gray-400 text-xs">Engaged Project: </p>
                                             {worker.engaged_project_name}
+                                            <p className="text-gray-400 text-xs">Current Daily Rate: </p>
+                                            ₹{worker.current_daily_rate}
                                         </div>
                                     </div>
                                 ) : worker.status === "Inactive" ? (
@@ -73,7 +76,12 @@ export default function WorkerTable({ workers }) {
                             </td>
                             <td className="p-3">
                                 {worker.created_on
-                                    ? new Date(worker.created_on).toLocaleDateString()
+                                    ? new Date(worker.created_on).toLocaleDateString("en-GB")
+                                    : "-"}
+                            </td>
+                            <td className="p-3">
+                                {worker.updated_on
+                                    ? new Date(worker.updated_on).toLocaleDateString("en-GB")
                                     : "-"}
                             </td>
                             <td className="p-3">
