@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getWorkers } from "../../services/workerService";
+import { deleteWorker, getWorkers } from "../../services/workerService";
 import WorkerTable from "../../components/worker/WorkerTable";
 
 export default function Workers() {
@@ -25,6 +25,20 @@ export default function Workers() {
       setWorkers([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this worker?")) return;
+
+    try {
+      setError("");
+      await deleteWorker(id);
+      setWorkers((currentWorkers) =>
+        currentWorkers.filter((worker) => worker.id !== id)
+      );
+    } catch (err) {
+      setError(err.response?.data?.message || "Unable to delete worker");
     }
   };
 
@@ -71,7 +85,7 @@ export default function Workers() {
       {loading ? (
         <p className="text-gray-400">Loading workers...</p>
       ) : (
-        <WorkerTable workers={filteredWorkers}/>
+        <WorkerTable workers={filteredWorkers} onDelete={handleDelete}/>
       )}
 
     </div>

@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getAllProjects, getRootProjects, createProject, updateProject,     softDeleteProject, getProjectById, createPost, savePostImages, 
+const { getAllProjects, getRootProjects, createProject, updateProject, softDeleteProject, getProjectById, createPost, savePostImages, 
         deleteMultipleImages, deleteImage, getImageById,
         getImageByIds, updatePostContent, getAssignedWorkersByProject,
         addWorkerAttendance, getPostsByProjectId, createOtherExpenses, updateOtherExpenses, getAllOtherExpenses, getExpensesById, getAllDistinctExpensesName, getLastPostOfProject, getUsedMaterialsInProject } = require('../models/projectModel');

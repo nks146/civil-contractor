@@ -48,10 +48,10 @@ exports.editWorker = async (id, worker) => {
   return result;
 };
 
-// Delete worker
-exports.deleteWorker = async (id) => {
-  const sql = 'DELETE FROM workers WHERE id = ?';
-  const [result] = await pool.query(sql, [id]);
+// Soft delete worker
+exports.softDeleteWorker = async (id) => {
+  const sql = 'UPDATE workers SET status = "Deleted", updated_on = ? WHERE id = ?';
+  const [result] = await pool.query(sql, [new Date(), id]);
   return result;
 };
 
@@ -75,7 +75,7 @@ exports.getWorkerlist = async (userId) => {
       INNER JOIN projects p ON p.id = wp.project_id
       GROUP BY wp.worker_id, p.user_id
     ) ep ON ep.worker_id = w.id AND ep.user_id = w.user_id
-    WHERE w.user_id = ?
+    WHERE w.user_id = ? and w.status != 'Deleted'
     ORDER BY w.created_on DESC
   `;
   const [rows] = await pool.query(sql, [userId]);
