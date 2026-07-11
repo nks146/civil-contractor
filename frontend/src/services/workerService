@@ -17,3 +17,7 @@ export const getWorkerById = async (id) => {
 export const updateWorker = async (id, payload) => {
   return api.put(`/api/worker/${id}/edit`, payload);
 };
+
+export const deleteWorker = async (id) => {
+  return api.delete(`/api/worker/${id}`);
+};

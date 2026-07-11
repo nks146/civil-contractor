@@ -2,7 +2,7 @@ import {Link, useNavigate } from "react-router-dom";
 import ActionDropdown from "../common/ActionDropdown";
 import {PencilSquareIcon, CalendarDaysIcon, TrashIcon} from "@heroicons/react/24/outline";
 
-export default function WorkerTable({ workers }) {
+export default function WorkerTable({ workers, onDelete }) {
     const navigate = useNavigate();
 
     if (workers.length === 0) {
@@ -117,7 +117,7 @@ export default function WorkerTable({ workers }) {
                                             icon: <TrashIcon className="h-4 w-4" />,
                                             color: "text-red-400 hover:text-red-300",
                                             onClick: () =>
-                                                handleDelete(worker.id)
+                                                onDelete(worker.id)
                                             }
                                         ]
                                     }
