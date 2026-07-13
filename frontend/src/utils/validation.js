@@ -49,6 +49,10 @@ export const validateWorker = (formData) => {
     errors.base_rate = "Maximum 4 digits allowed";
   }
 
+  if (formData.expertise === "Other" && !formData.custom_expertise?.trim()) {
+    errors.custom_expertise = "Custom expertise is required";
+  }
+
   return errors;
 };
 
