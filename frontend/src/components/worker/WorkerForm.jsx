@@ -1,9 +1,23 @@
 import { useState } from "react";
 import { validateWorker, handleNameChange, handleContactChange, handleRateChange } from "../../utils/validation";
 
-export default function WorkerForm({ onSubmit, initialData = {} }) {
-  const [errors, setError] = useState("");
-  const [formData, setFormData] = useState({
+const EXPERTISE_OPTIONS = [
+  "Labour",
+  "Mason",
+  "Electrician",
+  "Plumber",
+  "Painter",
+  "Carpenter",
+  "Welder",
+  "Helper",
+];
+
+const getInitialFormData = (initialData) => {
+  const savedExpertise = initialData.expertise?.trim();
+  const isStandardExpertise = EXPERTISE_OPTIONS.includes(savedExpertise);
+  const isOther = savedExpertise === "Other";
+
+  const baseFormData = {
     worker_name: "",
     address: "",
     contact: "",
@@ -12,7 +26,20 @@ export default function WorkerForm({ onSubmit, initialData = {} }) {
     expertise: "Labour",
     custom_expertise: "",
     ...initialData,
-  });
+  };
+
+  return {
+    ...baseFormData,
+    // Custom expertise is saved in the `expertise` database field. Convert it
+    // back into the form's "Other" selection when editing a worker.
+    expertise: savedExpertise && !isStandardExpertise ? "Other" : savedExpertise || "Labour",
+    custom_expertise: !isStandardExpertise && !isOther ? savedExpertise : "",
+  };
+};
+
+export default function WorkerForm({ onSubmit, initialData = {} }) {
+  const [errors, setError] = useState("");
+  const [formData, setFormData] = useState(() => getInitialFormData(initialData));
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -141,14 +168,21 @@ export default function WorkerForm({ onSubmit, initialData = {} }) {
         </select>
       </div>
       {formData.expertise === "Other" && (
-        <input
-          type="text"
-          name="custom_expertise"
-          placeholder="Enter Expertise"
-          value={formData.custom_expertise || ""}
-          onChange={handleChange}
-          className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white mt-3"
-        />
+        <>
+          <input
+            type="text"
+            name="custom_expertise"
+            placeholder="Enter Expertise"
+            value={formData.custom_expertise || ""}
+            onChange={handleChange}
+            className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white mt-3"
+          />
+          {errors.custom_expertise && (
+            <p className="text-red-400 text-sm mt-1">
+              {errors.custom_expertise}
+            </p>
+          )}
+        </>
       )}
 
       <button
