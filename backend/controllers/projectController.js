@@ -4,7 +4,7 @@ const fs = require('fs');
 const { getAllProjects, getRootProjects, createProject, updateProject, softDeleteProject, getProjectById, createPost, savePostImages, 
         deleteMultipleImages, deleteImage, getImageById,
         getImageByIds, updatePostContent, getAssignedWorkersByProject,
-        addWorkerAttendance, getPostsByProjectId, createOtherExpenses, updateOtherExpenses, getAllOtherExpenses, getExpensesById, getAllDistinctExpensesName, getLastPostOfProject, getUsedMaterialsInProject } = require('../models/projectModel');
+        addWorkerAttendance, getPostsByProjectId, createOtherExpenses, updateOtherExpenses, getAllOtherExpenses, getExpensesById, getAllDistinctExpensesName, getLastPostOfProject, getUsedMaterialsInProject, getPendingAndOngoingProjects: getPendingAndOngoingProjectsModel, getAllActiveProjects } = require('../models/projectModel');
 const { validationResult } = require('express-validator');
 const { toDDMMYYYY,formatDate } = require('../helpers/dateFormateHelper');
 
@@ -35,6 +35,32 @@ exports.rootProjects = async (req, res) => {
     res.status(200).json(projects);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching projects', error: err.message });
+  }
+};
+
+// Get projects with Pending or Ongoing status for the logged-in user
+exports.getPendingAndOngoingProjects = async (req, res) => {
+  try {
+    const projects = await getPendingAndOngoingProjectsModel(req.user.id);
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error fetching pending and ongoing projects',
+      error: err.message
+    });
+  }
+};
+
+// Get all active projects for the logged-in user
+exports.getAllActiveProjects = async (req, res) => {
+  try {
+    const projects = await getAllActiveProjects(req.user.id);
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error fetching active projects',
+      error: err.message
+    });
   }
 };
 

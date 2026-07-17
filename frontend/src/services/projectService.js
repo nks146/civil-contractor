@@ -56,6 +56,12 @@ export const getProjectWorkers = async (projectId) => {
   return api.get(`/api/project/${projectId}/workers`);
 }
 
+/*-------------Projects has status pending and ongoing----------------*/
+export const getPendingAndOngoingProjects = async () => {
+  const res = await api.get("/api/project/pending-ongoing-projects");
+  return res.data;
+}
+
 /* ---------- MATERIALS ---------- */
 export const getProjectUsedMaterials = async (projectId) => {
   return api.get(`/api/project/${projectId}/used-materials`);

@@ -21,3 +21,7 @@ export const updateWorker = async (id, payload) => {
 export const deleteWorker = async (id) => {
   return api.delete(`/api/worker/${id}`);
 };
+
+export const assignProjectToWorker = async (workerId, payload) => {
+  return api.post(`/api/worker/${workerId}/assign-project`, payload);
+};
