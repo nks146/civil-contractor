@@ -1,9 +1,20 @@
+import { useState } from "react";
 import {Link, useNavigate } from "react-router-dom";
 import ActionDropdown from "../common/ActionDropdown";
-import {PencilSquareIcon, CalendarDaysIcon, TrashIcon} from "@heroicons/react/24/outline";
+import AssignProjectModal from "./AssignProjectModal";
+import {PencilSquareIcon, CalendarDaysIcon, TrashIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline";
 
-export default function WorkerTable({ workers, onDelete }) {
+export default function WorkerTable({ workers, projects, onDelete, onAssignProject }) {
     const navigate = useNavigate();
+    const [selectedWorker, setSelectedWorker] = useState(null);
+
+    const openAssignProjectModal = (worker) => {
+        setSelectedWorker(worker);
+    };
+
+    const closeAssignProjectModal = () => {
+        setSelectedWorker(null);
+    };
 
     if (workers.length === 0) {
         return (
@@ -14,6 +25,7 @@ export default function WorkerTable({ workers, onDelete }) {
     }
 
     return (
+        <>
         <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-visible">
             <table className="w-full">
                 <thead className="bg-gray-700">
@@ -87,7 +99,28 @@ export default function WorkerTable({ workers, onDelete }) {
                             <td className="p-3">
                                 <ActionDropdown
                                     items={
-                                    worker.status === "Engaged"
+                                    worker.status === "Active"
+                                    ? [
+                                        {
+                                            label: "Edit",
+                                            icon: <PencilSquareIcon className="h-4 w-4" />,
+                                            color: "text-yellow-400",
+                                            onClick: () => navigate(`/workers/${worker.id}/edit`)
+                                        },
+                                        {
+                                            label: "Assign Project",
+                                            icon: <ClipboardDocumentCheckIcon className="h-4 w-4" />,
+                                            color: "text-indigo-400",
+                                            onClick: () => openAssignProjectModal(worker)
+                                        },
+                                        {
+                                            label: "Delete",
+                                            icon: <TrashIcon className="h-4 w-4" />,
+                                            color: "text-red-400",
+                                            onClick: () => onDelete(worker.id)
+                                        }
+                                    ]
+                                    : worker.status === "Engaged"
                                         ? [
                                             {
                                             label: "Edit",
@@ -128,6 +161,15 @@ export default function WorkerTable({ workers, onDelete }) {
                 </tbody>
             </table>
         </div>
+
+        <AssignProjectModal
+            isOpen={Boolean(selectedWorker)}
+            onClose={closeAssignProjectModal}
+            worker={selectedWorker}
+            projects={projects}
+            onAssign={onAssignProject}
+        />
+        </>
 
     );
 

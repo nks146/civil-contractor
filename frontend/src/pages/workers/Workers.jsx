@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { deleteWorker, getWorkers } from "../../services/workerService";
+import { assignProjectToWorker, deleteWorker, getWorkers } from "../../services/workerService";
+import { getPendingAndOngoingProjects } from "../../services/projectService";
 import WorkerTable from "../../components/worker/WorkerTable";
 
 export default function Workers() {
 
   const [workers,setWorkers] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [search,setSearch] = useState("");
   const [loading,setLoading] = useState(true);
   const [error,setError] = useState("");
 
   useEffect(()=>{
     loadWorkers();
+    loadProjects();
   },[]);
 
   const loadWorkers = async()=>{
@@ -28,6 +31,16 @@ export default function Workers() {
     }
   };
 
+  const loadProjects = async () => {
+    try {
+      const data = await getPendingAndOngoingProjects();
+      setProjects(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err.response?.data?.message || "Unable to load projects");
+      setProjects([]);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this worker?")) return;
 
@@ -39,6 +52,17 @@ export default function Workers() {
       );
     } catch (err) {
       setError(err.response?.data?.message || "Unable to delete worker");
+    }
+  };
+
+  const handleAssignProject = async ({ worker_id, ...assignment }) => {
+    try {
+      setError("");
+      await assignProjectToWorker(worker_id, assignment);
+      await loadWorkers();
+    } catch (err) {
+      setError(err.response?.data?.message || "Unable to assign project");
+      throw err;
     }
   };
 
@@ -85,7 +109,12 @@ export default function Workers() {
       {loading ? (
         <p className="text-gray-400">Loading workers...</p>
       ) : (
-        <WorkerTable workers={filteredWorkers} onDelete={handleDelete}/>
+        <WorkerTable
+          workers={filteredWorkers}
+          projects={projects}
+          onDelete={handleDelete}
+          onAssignProject={handleAssignProject}
+        />
       )}
 
     </div>
