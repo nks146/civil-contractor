@@ -5,6 +5,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const workerRoutes = require('./routes/workerRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use((err, req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/project', projectRoutes);
 app.use('/api/worker', workerRoutes);
+app.use('/api/attendance', attendanceRoutes);
 app.use('/api/order', orderRoutes);
 
 // Sample Protected Route

@@ -97,8 +97,7 @@ exports.assignProjectToWorkerController = async (req, res) => {
   if (!project_id||!rate_per_day||!work_start_date) {
     return res.status(400).json({ message: 'project id, rate per day, work start date are required' });
   }
-  try {
-    // Assuming a function assignProjectToWorker exists in the model
+  try {    
     const newAssign = {
       worker_id: id,
       project_id,

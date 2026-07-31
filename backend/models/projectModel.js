@@ -24,18 +24,6 @@ exports.getPendingAndOngoingProjects = async (userId) => {
   return rows;
 };
 
-// Get projects that are not deleted (status != 'Deleted') for the logged-in user
-exports.getAllActiveProjects = async (userId) => {
-  const [rows] = await pool.query(
-    `SELECT id, project_name, location, start_date, status
-     FROM projects
-     WHERE user_id = ? AND status != ?
-     ORDER BY created_on DESC`,
-    [userId, 'Deleted']
-  );
-  return rows;
-};
-
 // Create a new project
 exports.createProject = async (project) => {  
   const sql = `

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { assignProjectToWorker, deleteWorker, getWorkers } from "../../services/workerService";
-import { getPendingAndOngoingProjects } from "../../services/projectService";
+import { assignProjectToWorker, deleteWorker, getWorkers, 
+  getPendingAndOngoingProjects } from "../../services/workerService";
 import WorkerTable from "../../components/worker/WorkerTable";
 
 export default function Workers() {
