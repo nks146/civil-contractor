@@ -76,10 +76,10 @@ export default function Sidebar() {
               </div>
             )}
           </div>
-          {/* Attendance Link 
+          {/* Attendance Link */}
           <NavLink to="/attendance" className={linkClass}>
             Attendance
-          </NavLink> */}
+          </NavLink> 
 
           {/* Orders Link */}
           <NavLink to="/orders" className={linkClass}>
