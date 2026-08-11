@@ -13,7 +13,7 @@ import ProjectDetails from "./pages/project/ProjectDetails";
 import Workers from "./pages/workers/Workers";
 import AddWorker from "./pages/workers/AddWorker";
 import EditWorker from "./pages/workers/EditWorker";
-//import AttendancePage from "./pages/attendance/AttendancePage";
+import AttendancePage from "./pages/attendance/AttendancePage";
 
 export default function App() {
    const dispatch = useDispatch();
@@ -49,7 +49,7 @@ export default function App() {
         <Route path="/workers" element={<Workers />} />
         <Route path="/workers/add" element={<AddWorker />} />
         <Route path="/workers/:id/edit" element={<EditWorker />} />
-        {/* <Route path="/attendance" element={<AttendancePage />} /> */} 
+        <Route path="/attendance" element={<AttendancePage />} /> 
       </Route>
     </Routes>
   );

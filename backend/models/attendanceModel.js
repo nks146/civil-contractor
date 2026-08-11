@@ -149,3 +149,57 @@ exports.saveWorkerAttendance = async (userId, projectId, workingDate, attendance
         connection.release();
     }
 };
+
+//Get attendance data of a record by attendanceId for editing
+exports.getAttendanceById = async (attendanceId) => {
+    const query = `SELECT w.worker_name, w.expertise, w.address, wa.rate_per_day, wa.attendance_type, wa.comment FROM worker_attendance wa INNER JOIN workers w ON wa.worker_id = w.id WHERE wa.id = ?`;
+    const [rows] = await pool.query(query, [attendanceId]);
+    return rows[0];
+};
+
+//Edit attendance by attendanceId
+exports.editWorkerAttendance = async (userId, attendanceId, attendanceType, comment) => {
+    // Validate project ownership
+    const query = `SELECT project_id FROM worker_attendance WHERE id = ?`;
+    const [rows] = await pool.query(query, [attendanceId]);
+    if (rows.length === 0) {
+        return {
+            success: false,
+            message: "Attendance record not found."
+        };
+    }
+    const projectId = rows[0].project_id;
+    const isOwner = await validateProjectOwnership(userId, projectId);
+    if (!isOwner) {
+        return {
+            success: false,
+            message: "You are not authorized to edit attendance for this project."
+        };
+    }
+
+    // Update attendance
+    try {
+        await pool.query(
+            `UPDATE worker_attendance SET attendance_type = ?, comment = ?, updated_on = NOW(), updated_by = ? WHERE id = ?`,
+            [attendanceType, comment, userId, attendanceId]
+        );
+        return {
+            success: true,
+            message: "Attendance updated successfully."
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
+//Get total labour cost for a project according to attendance records
+exports.getTotalLabourCost = async (projectId) => {
+    const query = `SELECT SUM( wa.rate_per_day * CASE
+    WHEN wa.attendance_type = 'Full Day' THEN 1
+    WHEN wa.attendance_type = 'Half Day' THEN 0.5
+    ELSE 0
+  END
+) AS total_labour_cost FROM worker_attendance wa WHERE wa.project_id = ?;`;
+    const [rows] = await pool.query(query, [projectId]);
+    return rows[0].total_labour_cost || 0;
+};
