@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AttendanceFilter from "../../components/attendance/AttendanceFilter";
-//import AttendanceSummary from "../../components/attendance/AttendanceSummary";
-//import AttendanceTable from "../../components/attendance/AttendanceTable";
+import AttendanceSummary from "../../components/attendance/AttendanceSummary";
+import AttendanceTable from "../../components/attendance/AttendanceTable";
 //import AttendanceConfirmModal from "../../components/attendance/AttendanceConfirmModal";
 // Services
 import {
@@ -12,10 +12,10 @@ import {
 } from "../../services/attendanceService";
 
 // Utils
-// import {
-//     calculateAttendanceSummary,
-//     calculateLabourCost
-// } from "../../utils/attendanceUtils";
+import {
+    calculateAttendanceSummary,
+    calculateLabourCost
+} from "../../utils/attendanceUtils";
 
 export default function AttendancePage() {
     const [projects, setProjects] = useState([]);
@@ -69,6 +69,27 @@ export default function AttendancePage() {
 
     };
 
+    const handleAttendanceChange = (
+        workerId,
+        attendanceType,
+        comment = null
+    ) => {
+        setAttendanceRows((previousRows) =>
+            previousRows.map((worker) => {
+                if (worker.worker_id !== workerId) {
+                    return worker;
+                }
+                return {
+                    ...worker,
+                    attendance_type: attendanceType,
+                    ...(comment !== null && {
+                        comment,
+                    }),
+                };
+            })
+        );
+    };
+
     // for filtering the attendance rows based on search text
 
     const filteredRows = useMemo(() => {
@@ -85,11 +106,11 @@ export default function AttendancePage() {
     }, [attendanceRows, searchText]);
 
     // Summary Cards calculation
-    // useEffect(() => {
-    //     const attendanceSummary = calculateAttendanceSummary(attendanceRows);
-    //     attendanceSummary.labourCost = calculateLabourCost(attendanceRows);
-    //     setSummary(attendanceSummary);
-    // }, [attendanceRows]);
+    useEffect(() => {
+        const attendanceSummary = calculateAttendanceSummary(attendanceRows);
+        attendanceSummary.labourCost = calculateLabourCost(attendanceRows);
+        setSummary(attendanceSummary);
+    }, [attendanceRows]);
 
     // save attendance
     const handleSubmitAttendance = () => {
@@ -155,6 +176,12 @@ export default function AttendancePage() {
                 onDateChange={setAttendanceDate}
                 onSearchChange={setSearchText}
                 onLoadAttendance={loadAttendance}
+            />
+            <AttendanceSummary summary={summary}/>
+            <AttendanceTable
+                attendanceRows={attendanceRows}
+                filteredRows={filteredRows}
+                onAttendanceChange={handleAttendanceChange}
             />
         </div>
     );
