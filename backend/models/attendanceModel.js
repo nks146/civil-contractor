@@ -23,7 +23,7 @@ const validateProjectOwnership = async (userId, projectId) => {
 // Try to load already saved attendance
 async function getSavedAttendance(projectId, attendanceDate) {
     try {
-        const savedAttendance = `SELECT wa.worker_id, w.worker_name, w.expertise, wa.rate_per_day, wa.attendance_type, wa.comment FROM worker_attendance wa INNER JOIN workers w ON wa.worker_id = w.id WHERE wa.project_id = ? AND wa.working_date = ? ORDER BY w.worker_name`;
+        const savedAttendance = `SELECT wa.id as attendance_id, wa.worker_id, w.worker_name, w.expertise, wa.rate_per_day, wa.attendance_type, wa.comment FROM worker_attendance wa INNER JOIN workers w ON wa.worker_id = w.id WHERE wa.project_id = ? AND wa.working_date = ? ORDER BY w.worker_name`;
         const [attendanceRows] = await pool.query(savedAttendance, [projectId, attendanceDate]);
         return attendanceRows;
     } catch (error) {
@@ -34,7 +34,7 @@ async function getSavedAttendance(projectId, attendanceDate) {
 // Generate default attendance
 async function generateDefaultAttendance(projectId) {
     try {
-        const query = `SELECT wp.worker_id, w.worker_name, w.expertise, wp.rate_per_day,'FULL' AS attendance_type,'' AS comment FROM worker_projects wp INNER JOIN workers w ON wp.worker_id = w.id WHERE wp.project_id = ? AND wp.status = 'Assigned' ORDER BY w.worker_name`;
+        const query = `SELECT '' as attendance_id, wp.worker_id, w.worker_name, w.expertise, wp.rate_per_day,'Full Day' AS attendance_type,'' AS comment FROM worker_projects wp INNER JOIN workers w ON wp.worker_id = w.id WHERE wp.project_id = ? AND wp.status = 'Assigned' ORDER BY w.worker_name`;
         const [defaultAttendanceRows] = await pool.query(query, [projectId]);
         return defaultAttendanceRows;
     } catch (error) {
