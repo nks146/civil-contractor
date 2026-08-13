@@ -125,7 +125,7 @@ exports.getAttendanceById = async (req, res) => {
 };
 
 //Edit worker attendance
-exports.editWorkerAttendance = async (req, res) => {
+exports.editWorkerAttendance = async (req, res) => { console.log("Editing worker attendance: ", req.body);
     try {
         const userId = req.user.id;
         const attendanceId = req.params.attendanceId;

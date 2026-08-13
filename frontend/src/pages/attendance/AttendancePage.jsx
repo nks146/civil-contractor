@@ -3,6 +3,7 @@ import AttendanceFilter from "../../components/attendance/AttendanceFilter";
 import AttendanceSummary from "../../components/attendance/AttendanceSummary";
 import AttendanceTable from "../../components/attendance/AttendanceTable";
 //import AttendanceConfirmModal from "../../components/attendance/AttendanceConfirmModal";
+import EditAttendanceModal from "../../components/attendance/EditAttendanceModal";
 // Services
 import {
     getProjects,
@@ -36,6 +37,9 @@ export default function AttendancePage() {
     const [loading, setLoading] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [submitMode, setSubmitMode] = useState("save");
+
+    const [editingWorker, setEditingWorker] = useState(null);
+    const [updatingAttendance, setUpdatingAttendance] = useState(false);
 
     useEffect(() => {
         loadProjects();
@@ -156,6 +160,50 @@ export default function AttendancePage() {
         setShowConfirmModal(false); 
     };
 
+    const handleEditAttendance = (worker) => {
+        setEditingWorker(worker);
+    };
+
+    const handleCloseEditModal = () => {
+        if (updatingAttendance) return;
+        setEditingWorker(null);
+    };
+
+    const handleUpdateAttendance = async ({
+        attendanceId,
+        attendanceType,
+        comment,
+        }) => {
+        try {
+            setUpdatingAttendance(true);
+
+            await updateAttendance(attendanceId, {
+            attendanceType: attendanceType,
+            comment,
+            });
+
+            setAttendanceRows((previousRows) =>
+            previousRows.map((worker) => {
+                if (worker.id !== attendanceId) {
+                return worker;
+                }
+
+                return {
+                ...worker,
+                attendance_type: attendanceType,
+                comment,
+                };
+            })
+            );
+
+            setEditingWorker(null);
+        } catch (error) {
+            console.error("Failed to update attendance:", error);
+        } finally {
+            setUpdatingAttendance(false);
+        }
+    };
+
     return (
         <div className="p-6">
             <div className="mb-6">
@@ -182,7 +230,16 @@ export default function AttendancePage() {
                 attendanceRows={attendanceRows}
                 filteredRows={filteredRows}
                 onAttendanceChange={handleAttendanceChange}
+                onEdit={handleEditAttendance}
             />
+            {editingWorker && (
+                <EditAttendanceModal
+                    worker={editingWorker}
+                    loading={updatingAttendance}
+                    onClose={handleCloseEditModal}
+                    onUpdate={handleUpdateAttendance}
+                />
+            )}
         </div>
     );
 };
