@@ -13,7 +13,7 @@ export const getAttendance = async (projectId, attendanceDate) => {
 }
 
 /*-------------Attendance ----------------*/
-export const saveAttendance = async (payload) => {
+export const saveAttendance = async (payload) => { 
   return api.post("/api/attendance/save-attendance", payload);
 };
 

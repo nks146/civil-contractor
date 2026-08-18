@@ -55,7 +55,7 @@ exports.getAllWorkerAttendanceByDate = async (req, res) => {
     }
 };
 
-exports.saveWorkerAttendance = async (req, res) => {
+exports.saveWorkerAttendance = async (req, res) => { 
     try {
         const userId = req.user.id;
         const { projectId, workingDate, attendanceData } = req.body;
@@ -125,7 +125,7 @@ exports.getAttendanceById = async (req, res) => {
 };
 
 //Edit worker attendance
-exports.editWorkerAttendance = async (req, res) => { console.log("Editing worker attendance: ", req.body);
+exports.editWorkerAttendance = async (req, res) => { 
     try {
         const userId = req.user.id;
         const attendanceId = req.params.attendanceId;
