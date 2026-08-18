@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import AttendanceFilter from "../../components/attendance/AttendanceFilter";
 import AttendanceSummary from "../../components/attendance/AttendanceSummary";
 import AttendanceTable from "../../components/attendance/AttendanceTable";
-//import AttendanceConfirmModal from "../../components/attendance/AttendanceConfirmModal";
+import AttendanceConfirmModal from "../../components/attendance/AttendanceConfirmModal";
 import EditAttendanceModal from "../../components/attendance/EditAttendanceModal";
+import AttendanceActions from "../../components/attendance/AttendanceActions";
 // Services
 import {
     getProjects,
@@ -37,9 +38,11 @@ export default function AttendancePage() {
     const [loading, setLoading] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [submitMode, setSubmitMode] = useState("save");
+    const [savingAttendance, setSavingAttendance] = useState(false);
 
     const [editingWorker, setEditingWorker] = useState(null);
     const [updatingAttendance, setUpdatingAttendance] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
         loadProjects();
@@ -117,48 +120,49 @@ export default function AttendancePage() {
     }, [attendanceRows]);
 
     // save attendance
-    const handleSubmitAttendance = () => {
-        setSubmitMode(
-            attendanceStatus === "Saved"
-                ? "update"
-                : "save"
-        );
+    const handleSaveAttendance = () => {
+        if (!selectedProject) {
+            return;
+        }
+
+        if (!attendanceRows.length) {
+            return;
+        }
+
+        setSubmitMode("save");
         setShowConfirmModal(true);
     };
 
-    // Confirm modal actions
-    const handleConfirmSubmit = async () => {
-        setShowConfirmModal(false);
-        setLoading(true);
+    const handleConfirmSaveAttendance = async () => {
         try {
-            if (submitMode === "save") {
-                await saveAttendance({
-                    projectId: selectedProject,
-                    attendanceDate,
-                    attendanceRows
-                });
-            }
-            else if (submitMode === "update") {
-                await updateAttendance({
-                    projectId: selectedProject,
-                    attendanceDate,
-                    attendanceRows
-                });
-            }
-            // reload the attendance data after saving/updating
-            await loadAttendance();
-        }
-        catch (error) {
-            console.error(error);
-        }
-        finally {
-            setLoading(false);
-        }
-    };
+            setSavingAttendance(true);
 
-    const handleCancelSubmit = () => {
-        setShowConfirmModal(false); 
+            const formattedAttendanceData = attendanceRows.map((item) => ({
+                workerId: item.worker_id,
+                ratePerDay: item.rate_per_day,
+                attendanceType: item.attendance_type,
+                comment: item.comment,
+            }));
+
+            await saveAttendance({
+            projectId: selectedProject,
+            workingDate: attendanceDate,
+            attendanceData: formattedAttendanceData,
+            });
+
+            // Close confirmation modal
+            setShowConfirmModal(false);
+            // Show success message
+            setSuccessMessage("Attendance submitted successfully.");
+            // Reload from database
+            await loadAttendance();
+        } catch (error) {
+            console.error("Failed to save attendance:", error);
+        } finally {
+            setSavingAttendance(false);
+        }
     };
+    
 
     const handleEditAttendance = (worker) => {
         setEditingWorker(worker);
@@ -180,23 +184,12 @@ export default function AttendancePage() {
             await updateAttendance(attendanceId, {
             attendanceType: attendanceType,
             comment,
-            });
+            });   
 
-            setAttendanceRows((previousRows) =>
-            previousRows.map((worker) => {
-                if (worker.id !== attendanceId) {
-                return worker;
-                }
-
-                return {
-                ...worker,
-                attendance_type: attendanceType,
-                comment,
-                };
-            })
-            );
-
+            setSuccessMessage("Attendance updated successfully.");
+            await loadAttendance();
             setEditingWorker(null);
+
         } catch (error) {
             console.error("Failed to update attendance:", error);
         } finally {
@@ -204,15 +197,20 @@ export default function AttendancePage() {
         }
     };
 
+    useEffect(() => {
+        if (!successMessage) return;
+        const timer = setTimeout(() => {
+            setSuccessMessage("");
+        }, 4000);
+        return () => clearTimeout(timer);
+    }, [successMessage]);
+
     return (
         <div className="p-6">
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-white">
-                    Attendance
+                    Worker Attendance
                 </h1>
-                <p className="text-gray-400 mt-1">
-                    Manage daily worker attendance
-                </p>
             </div>
             <AttendanceFilter
                 projects={projects}
@@ -225,6 +223,13 @@ export default function AttendancePage() {
                 onSearchChange={setSearchText}
                 onLoadAttendance={loadAttendance}
             />
+
+            {successMessage && (
+                <div className="mt-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">
+                    ✓ {successMessage}
+                </div>
+            )}
+
             <AttendanceSummary summary={summary}/>
             <AttendanceTable
                 attendanceRows={attendanceRows}
@@ -232,6 +237,14 @@ export default function AttendancePage() {
                 onAttendanceChange={handleAttendanceChange}
                 onEdit={handleEditAttendance}
             />
+            <AttendanceActions
+                loading={loading}
+                savingAttendance={savingAttendance}
+                selectedProject={selectedProject}
+                attendanceRows={attendanceRows}
+                attendanceStatus={attendanceStatus}
+                onSave={handleSaveAttendance}
+            />            
             {editingWorker && (
                 <EditAttendanceModal
                     worker={editingWorker}
@@ -240,6 +253,19 @@ export default function AttendancePage() {
                     onUpdate={handleUpdateAttendance}
                 />
             )}
+            <AttendanceConfirmModal
+                isOpen={showConfirmModal}
+                projectName={
+                    projects.find(
+                    (project) => project.id === Number(selectedProject)
+                    )?.project_name
+                }
+                attendanceDate={attendanceDate}
+                totalWorkers={attendanceRows.length}
+                loading={savingAttendance}
+                onClose={() => setShowConfirmModal(false)}
+                onConfirm={handleConfirmSaveAttendance}
+            />
         </div>
     );
 };
