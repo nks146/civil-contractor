@@ -33,3 +33,6 @@ jobs:
 
       - name: Check application
         run: node --check server.js
+
+      - name: Build Docker image
+        run: docker build -t contractor-backend:ci .
