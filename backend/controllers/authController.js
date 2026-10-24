@@ -67,14 +67,19 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const results = await findUserByEmail(email); 
-      if (results.length === 0) return res.status(400).json({ message: 'Invalid email or password' });
-      const user = results;
-      const valid = bcrypt.compareSync(password, user.password);
-      if (!valid) return res.status(400).json({ message: 'Invalid email or password' });
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const userData = { id: user.id, name: user.name, email: user.email, role: user.role };
-      res.json({ token, userData });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const user = await findUserByEmail(email);
+    if (!user) return res.status(400).json({ message: 'Invalid email or password' });
+
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(400).json({ message: 'Invalid email or password' });
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const userData = { id: user.id, name: user.name, email: user.email, role: user.role };
+    res.json({ token, userData });
   } catch (err) {
     console.error("Login Error:", err);
     res.status(500).json({ message: "Server error", error: err.message });

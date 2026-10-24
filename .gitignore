@@ -50,3 +50,9 @@ Thumbs.db
 coverage/
 .tmp/
 .cache/
+
+# =========================
+# Database Dumps
+# =========================
+*.sql
+*.sql.gz
