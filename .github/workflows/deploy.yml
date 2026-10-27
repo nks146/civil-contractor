@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    environment:
+      name: production
+
     # Prevent two production deployments from running simultaneously.
     concurrency:
       group: contractor-backend-production
