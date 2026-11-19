@@ -11,7 +11,10 @@ const orderRoutes = require('./routes/orderRoutes');
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:5173"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://d25vkvjq5y1lci.cloudfront.net"],
   credentials: true
 }));
 
