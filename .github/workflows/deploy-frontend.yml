@@ -41,6 +41,8 @@ jobs:
 
       - name: Build React application
         working-directory: frontend
+        env:
+          VITE_API_BASE_URL: https://d25vkvjq5y1lci.cloudfront.net
         run: npm run build
 
       - name: Configure AWS credentials using OIDC
