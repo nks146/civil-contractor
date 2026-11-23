@@ -52,6 +52,8 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Upload frontend files to S3
+        env:
+          S3_BUCKET_NAME: ${{ vars.S3_BUCKET_NAME }}
         run: |
           aws s3 sync frontend/dist/ s3://$S3_BUCKET_NAME/ \
             --delete \
